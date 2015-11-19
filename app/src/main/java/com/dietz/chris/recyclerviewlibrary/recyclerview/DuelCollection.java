@@ -76,7 +76,6 @@ class DuelCollection<K extends AdapterItem> {
 
         int newPosition = Utils.getPosition(item, mList);
         mList.add(newPosition, item);
-        item.setPositionInList(newPosition);
 
         if (oldPosition == newPosition) {
             mListener.onItemChanged(newPosition, item);
@@ -95,7 +94,6 @@ class DuelCollection<K extends AdapterItem> {
         } else {
             mList.add(position, item);
         }
-        item.setPositionInList(position);
         mListener.onItemInserted(position, item);
         return position;
     }

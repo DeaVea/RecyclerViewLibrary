@@ -7,24 +7,95 @@ import android.support.annotation.NonNull;
  */
 public abstract class AdapterItem implements Comparable<AdapterItem> {
 
-    private int mPositionInList = -1;
+    interface AdapterListener {
+        void itemChanged(AdapterItem item);
+    }
 
-    /**
-     * A method that the adapter list can use to keep track of where this item is placed.
-     * @return
-     *      Current position in the list.  A value of less than 0 should means this item is not in the list.
-     */
-    /* internal */ int getPositionInList() {
-        return mPositionInList;
+    private boolean mIsSolid;
+    private boolean mIsOpen;
+    private AdapterListener mListener;
+
+    public AdapterItem() {
+        mIsOpen = true;
+        mIsSolid = false;
+        mListener = null;
     }
 
     /**
-     * Set the item's current position in this list.
-     * @param position
-     *      The current position in this list.
+     * Bind a listener to this item.
+     * @param listener
+     *      Adapter listener
      */
-    /* internal */ void setPositionInList(int position) {
-        mPositionInList = position;
+    public void bindList(AdapterListener listener) {
+        mListener = listener;
+    }
+
+    /**
+     * Remove the listener from the item.
+     */
+    public void unbindListener() {
+        mListener = null;
+    }
+
+    /**
+     * If true, then allow this item to be opened or locked as-is.
+     * @param allow
+     *      Allow the item to be opened or closed.
+     *
+     */
+    public final void allowOpenClose(boolean allow) {
+        mIsSolid = !allow;
+    }
+
+    /**
+     * Returns true if the item has been opened.
+     * @return
+     *      True if the item is open.
+     */
+    public final boolean isOpen() {
+        return mIsOpen;
+    }
+
+    /**
+     * Call an open to the call to the adapter item.
+     */
+    public final void open() {
+        if (!mIsSolid && !mIsOpen) {
+            onOpen();
+            mIsOpen = true;
+            notifyListChange();
+        }
+    }
+
+    /**
+     * Perform a close operation on the item.
+     */
+    public final void close() {
+        if (!mIsSolid && mIsOpen) {
+            onClose();
+            mIsOpen = false;
+            notifyListChange();
+        }
+    }
+
+    /**
+     * An open call has been placed on this item.
+     */
+    public void onOpen() {
+
+    }
+
+    /**
+     * A close call has been placed on this item.
+     */
+    public void onClose() {
+
+    }
+
+    protected void notifyListChange() {
+        if (mListener != null) {
+            mListener.itemChanged(this);
+        }
     }
 
     /**

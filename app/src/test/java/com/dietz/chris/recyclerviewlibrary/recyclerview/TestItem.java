@@ -13,10 +13,6 @@ public class TestItem extends AdapterItem {
         this.key = key;
     }
 
-    public int getPositionInList() {
-        return super.getPositionInList();
-    }
-
     @NonNull
     @Override
     public String getIdentityKey() {

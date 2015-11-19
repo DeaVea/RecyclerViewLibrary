@@ -24,43 +24,24 @@ class Utils {
      *      The position that the item should be in.
      */
     public static int getPosition(AdapterItem item, List<? extends AdapterItem> listToCheck) {
-        if (listToCheck.size() == 0) {
-            return  0;
-        }
-        int positionToCheck = listToCheck.size() / 2;
-        AdapterItem itemToCheck = listToCheck.get(positionToCheck);
-        int compare = item.compareTo(itemToCheck);
-        if (compare == 0) {
-            // Turns out this is the correct spot.  We're done!
-            return positionToCheck;
-        }
-
         int start = 0;
         int end = listToCheck.size() - 1;
-        do {
-            if (compare > 0) {
-                // Sublist to the right
-                start = positionToCheck;
-                positionToCheck += Math.round(((float) end - (float) positionToCheck) / 2f);
-            } else if (compare < 0) {
-                end = positionToCheck;
-                positionToCheck -= Math.round(((float) positionToCheck - (float) start) / 2f);
-            }
+        int positionToCheck;
+        AdapterItem itemToCheck;
+        int compare;
+
+        while (start <= end) {
+            positionToCheck = (start + end) >>> 1;
             itemToCheck = listToCheck.get(positionToCheck);
             compare = item.compareTo(itemToCheck);
-        } while (compare != 0 && (end - start) > 1);
-
-        int returnPos;
-        if (compare == 0) {
-            returnPos = positionToCheck;
-        } else if (positionToCheck == start) {
-            returnPos = (compare < 0) ? start : start + 1;
-        } else { // positionToCheck == end always
-            returnPos = (compare < 0) ? end : end + 1;
+            if (compare < 0) {
+                end = positionToCheck - 1;
+            } else if (compare > 0){
+                start = positionToCheck + 1;
+            } else {
+                return positionToCheck;
+            }
         }
-        returnPos = Math.max(0, returnPos);
-        returnPos = Math.min(listToCheck.size(), returnPos);
-
-        return returnPos;
+        return start;
     }
 }
