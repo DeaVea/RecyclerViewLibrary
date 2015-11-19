@@ -9,7 +9,7 @@ import android.view.ViewGroup;
 /**
  *
  */
-public abstract class ViewHolder<K> extends RecyclerView.ViewHolder {
+public abstract class ViewHolder<K extends AdapterItem> extends RecyclerView.ViewHolder {
 
     private K mBoundItem;
 

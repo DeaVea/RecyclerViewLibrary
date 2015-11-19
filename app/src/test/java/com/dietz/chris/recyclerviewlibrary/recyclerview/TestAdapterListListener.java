@@ -14,6 +14,7 @@ public class TestAdapterListListener implements ListListener<TestItem> {
     ArrayList<InsertObj> itemsPosInserted = new ArrayList<>();
     ArrayList<ChangeObj> itemsPosChanged = new ArrayList<>();
     ArrayList<MoveObj> itemsMoved = new ArrayList<>();
+    ArrayList<RangeRemovedObj> itemsRangeRemoved = new ArrayList<>();
 
     public int lastItemPositionInserted() {
         return (itemsPosInserted.isEmpty()) ? -1 : itemsPosInserted.get(itemsPosInserted.size() - 1).position;
@@ -25,6 +26,10 @@ public class TestAdapterListListener implements ListListener<TestItem> {
 
     public MoveObj lastItemMoved() {
         return (itemsPosChanged.isEmpty()) ? null : itemsMoved.get(itemsMoved.size() - 1);
+    }
+
+    public RangeRemovedObj lastItemRangeRemoved() {
+        return (itemsRangeRemoved.isEmpty()) ? null : itemsRangeRemoved.get(itemsRangeRemoved.size() - 1);
     }
 
     @Override
@@ -59,7 +64,7 @@ public class TestAdapterListListener implements ListListener<TestItem> {
 
     @Override
     public void onItemRangeRemoved(int positionStart, int itemCount) {
-
+        itemsRangeRemoved.add(new RangeRemovedObj(positionStart, itemCount));
     }
 
     @Override
@@ -96,6 +101,16 @@ public class TestAdapterListListener implements ListListener<TestItem> {
             this.item = item;
             this.fromPosition = fromPosition;
             this.toPosition = toPosition;
+        }
+    }
+
+    public static class RangeRemovedObj {
+        int startPosition;
+        int count;
+
+        public RangeRemovedObj(int start, int count) {
+            this.startPosition = start;
+            this.count = count;
         }
     }
 }

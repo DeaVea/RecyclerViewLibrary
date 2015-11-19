@@ -5,7 +5,27 @@ import android.support.annotation.NonNull;
 /**
  *
  */
-public interface AdapterItem extends Comparable<AdapterItem> {
+public abstract class AdapterItem implements Comparable<AdapterItem> {
+
+    private int mPositionInList = -1;
+
+    /**
+     * A method that the adapter list can use to keep track of where this item is placed.
+     * @return
+     *      Current position in the list.  A value of less than 0 should means this item is not in the list.
+     */
+    /* internal */ int getPositionInList() {
+        return mPositionInList;
+    }
+
+    /**
+     * Set the item's current position in this list.
+     * @param position
+     *      The current position in this list.
+     */
+    /* internal */ void setPositionInList(int position) {
+        mPositionInList = position;
+    }
 
     /**
      * This is the key to identify the object if the contents represent the same datapoints.  This is usually
@@ -25,5 +45,12 @@ public interface AdapterItem extends Comparable<AdapterItem> {
      *      A unique key used to identify the object.
      */
     @NonNull
-    String getIdentityKey();
+    public abstract String getIdentityKey();
+
+    /**
+     * Type of item that this item represents.
+     * @return
+     *      Value that this item represents in the list.
+     */
+    public abstract int getType();
 }

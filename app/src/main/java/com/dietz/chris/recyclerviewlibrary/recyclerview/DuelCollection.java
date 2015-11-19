@@ -30,6 +30,27 @@ class DuelCollection<K extends AdapterItem> {
     }
 
     /**
+     * Removes all items from the collection
+     */
+    public final void clear() {
+        int size = mList.size();
+        mList.clear();
+        mMap.clear();
+        mListener.onItemRangeRemoved(0, size);
+    }
+
+    /**
+     * Gets the item at the given position.
+     * @param position
+     *      Position to retrieve the item.
+     * @return
+     *      Item contained at the given position.
+     */
+    public K get(int position) {
+        return mList.get(position);
+    }
+
+    /**
      * Add an item or update it if it is already in the collection.
      * @param item
      *      Item to update.
@@ -55,6 +76,7 @@ class DuelCollection<K extends AdapterItem> {
 
         int newPosition = Utils.getPosition(item, mList);
         mList.add(newPosition, item);
+        item.setPositionInList(newPosition);
 
         if (oldPosition == newPosition) {
             mListener.onItemChanged(newPosition, item);
@@ -73,6 +95,7 @@ class DuelCollection<K extends AdapterItem> {
         } else {
             mList.add(position, item);
         }
+        item.setPositionInList(position);
         mListener.onItemInserted(position, item);
         return position;
     }
