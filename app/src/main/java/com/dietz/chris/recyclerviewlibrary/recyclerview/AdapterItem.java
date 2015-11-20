@@ -1,15 +1,12 @@
 package com.dietz.chris.recyclerviewlibrary.recyclerview;
 
 import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 
 /**
  *
  */
 public abstract class AdapterItem implements Comparable<AdapterItem> {
-
-    interface AdapterListener {
-        void itemChanged(AdapterItem item);
-    }
 
     private boolean mIsSolid;
     private boolean mIsOpen;
@@ -19,6 +16,18 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
         mIsOpen = true;
         mIsSolid = false;
         mListener = null;
+    }
+
+    /**
+     * This returns the number of items that are current in the adapterItem including the adapterItem
+     * itself.  By default this returns a 1 since this is the only item here.  Groups should override this
+     * to return one + many more.
+     * @return
+     *      Number of visible items in the adapter item.
+     *
+     */
+    int getItemCount() {
+        return 1;
     }
 
     /**
@@ -92,6 +101,14 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
 
     }
 
+    @Nullable
+    /* internal */ AdapterListener myListener() {
+        return mListener;
+    }
+
+    /**
+     * Notify that this item has been changed.
+     */
     protected void notifyListChange() {
         if (mListener != null) {
             mListener.itemChanged(this);

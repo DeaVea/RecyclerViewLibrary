@@ -13,7 +13,7 @@ public class DuelCollectionTests {
     @Test
     public void addAndSizeTests() {
         TestAdapterListListener listListener = new TestAdapterListListener();
-        final DuelCollection<TestItem> items = new DuelCollection<>(listListener);
+        final AdapterItemCollection<TestItem> items = new AdapterItemCollection<>(listListener);
 
         assertThat(items.size(), equalTo(0));
 
@@ -45,7 +45,7 @@ public class DuelCollectionTests {
     @Test
     public void updateTests() {
         TestAdapterListListener listListener = new TestAdapterListListener();
-        final DuelCollection<TestItem> items = new DuelCollection<>(listListener);
+        final AdapterItemCollection<TestItem> items = new AdapterItemCollection<>(listListener);
 
         items.addOrUpdate(new OrderTestItem("A", 0));
         items.addOrUpdate(new OrderTestItem("B", 1));
@@ -109,7 +109,7 @@ public class DuelCollectionTests {
     @Test
     public void getTests() {
         TestAdapterListListener listListener = new TestAdapterListListener();
-        final DuelCollection<TestItem> items = new DuelCollection<>(listListener);
+        final AdapterItemCollection<TestItem> items = new AdapterItemCollection<>(listListener);
 
         items.addOrUpdate(new OrderTestItem("A", 0));
         items.addOrUpdate(new OrderTestItem("B", 1));
@@ -127,7 +127,7 @@ public class DuelCollectionTests {
     @Test
     public void clearTests() {
         TestAdapterListListener listListener = new TestAdapterListListener();
-        final DuelCollection<TestItem> items = new DuelCollection<>(listListener);
+        final AdapterItemCollection<TestItem> items = new AdapterItemCollection<>(listListener);
 
         items.addOrUpdate(new OrderTestItem("A", 0));
         items.addOrUpdate(new OrderTestItem("B", 1));

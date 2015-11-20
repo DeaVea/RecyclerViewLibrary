@@ -7,16 +7,24 @@ import android.support.annotation.Nullable;
  */
 public class AdapterList<K extends AdapterItem> {
 
-    private final DuelCollection<K> mMainList;
+    private final AdapterItemCollection<K> mMainList;
 
     private final InternalListListener<K> mListListener;
 
     public AdapterList() {
-        mMainList = new DuelCollection<>(mListListener = new InternalListListener<>());
+        mMainList = new AdapterItemCollection<>(mListListener = new InternalListListener<>());
     }
 
     public void setListListener(ListListener<K> listListener) {
         mListListener.setInternalListener(listListener);
+    }
+
+    public void add(K item) {
+        mMainList.addOrUpdate(item);
+    }
+
+    public void remove(K item) {
+        mMainList.remove(item);
     }
 
     public int size() {
@@ -45,9 +53,7 @@ public class AdapterList<K extends AdapterItem> {
         }
 
         public void setInternalListener(@Nullable ListListener<K> listener) {
-            if (mInternalListener != null) {
-                mInternalListener = listener;
-            }
+            mInternalListener = listener;
         }
 
         @Override

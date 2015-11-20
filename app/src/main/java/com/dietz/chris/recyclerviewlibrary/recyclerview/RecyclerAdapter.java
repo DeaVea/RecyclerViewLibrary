@@ -16,6 +16,15 @@ public abstract class RecyclerAdapter<K extends AdapterItem> extends RecyclerVie
 
     public RecyclerAdapter() {
         mList = new AdapterList<>();
+        mList.setListListener(new AdapterListListener<K>(this));
+    }
+
+    public void addItem(K item) {
+        mList.add(item);
+    }
+
+    public void removeItem(K item) {
+        mList.remove(item);
     }
 
     @Override

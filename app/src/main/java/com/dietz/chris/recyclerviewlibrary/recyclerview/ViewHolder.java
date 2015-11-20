@@ -28,7 +28,13 @@ public abstract class ViewHolder<K extends AdapterItem> extends RecyclerView.Vie
 
     public final void bind(K item) {
         mBoundItem = item;
+        onBind(item);
     }
 
     public abstract void onBind(K item);
+
+    public <T extends View> T findView(int id) {
+        //noinspection unchecked  It'll throw a ClassCastException anyway so the w
+        return (T) itemView.findViewById(id);
+    }
 }

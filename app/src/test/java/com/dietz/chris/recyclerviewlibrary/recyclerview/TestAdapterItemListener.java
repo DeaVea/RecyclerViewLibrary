@@ -1,11 +1,13 @@
 package com.dietz.chris.recyclerviewlibrary.recyclerview;
 
+import android.support.annotation.NonNull;
+
 import java.util.ArrayList;
 
 /**
  *
  */
-public class TestAdapterItemListener implements AdapterItem.AdapterListener {
+public class TestAdapterItemListener implements AdapterListener {
 
     final ArrayList<AdapterItem> mChangedItems = new ArrayList<>();
 
@@ -16,5 +18,25 @@ public class TestAdapterItemListener implements AdapterItem.AdapterListener {
     @Override
     public void itemChanged(AdapterItem item) {
         mChangedItems.add(item);
+    }
+
+    @Override
+    public void itemAdded(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int atPosition) {
+
+    }
+
+    @Override
+    public void itemsAdded(@NonNull AdapterItemGroup container, @NonNull int fromPosition, int size) {
+
+    }
+
+    @Override
+    public void itemRemoved(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int fromPosition) {
+
+    }
+
+    @Override
+    public void itemsRemoved(@NonNull AdapterItemGroup container, @NonNull int fromPosition, @NonNull int size) {
+
     }
 }
