@@ -4,10 +4,10 @@ package com.dietz.chris.recyclerviewlibrary.recyclerview;
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
  */
 public abstract class AdapterItemGroup extends AdapterItem {
-    private final AdapterItemCollection<AdapterItem> mItems;
+    private final AdapterItemCollection mItems;
 
     public AdapterItemGroup() {
-        mItems = new AdapterItemCollection<>(new InternalListener());
+        mItems = new AdapterItemCollection(new InternalListener());
     }
 
     @Override
@@ -17,6 +17,19 @@ public abstract class AdapterItemGroup extends AdapterItem {
 
     public final void addOrUpdateItem(AdapterItem item) {
         mItems.addOrUpdate(item);
+    }
+
+    @Override
+    public AdapterItem getItem(int position) {
+        if (position == 0) {
+            return this;
+        }
+
+        --position;
+        if (position < mItems.size()) {
+            return mItems.get(position);
+        }
+        return null;
     }
 
     @Override
@@ -64,7 +77,7 @@ public abstract class AdapterItemGroup extends AdapterItem {
         }
     }
 
-    private class InternalListener implements ListListener<AdapterItem> {
+    private class InternalListener implements ListListener {
 
         @Override
         public void onDatasetChanged() {

@@ -3,15 +3,15 @@ package com.dietz.chris.recyclerviewlibrary.recyclerview;
 /**
  *
  */
-public interface ListListener<K> {
+public interface ListListener {
 
     void onDatasetChanged();
 
-    void onItemChanged(int atPosition, K payload);
+    void onItemChanged(int atPosition, AdapterItem payload);
 
-    void onItemInserted(int atPosition, K payload);
+    void onItemInserted(int atPosition, AdapterItem payload);
 
-    void onItemMoved(int fromPosition, int toPosition, K payload);
+    void onItemMoved(int fromPosition, int toPosition, AdapterItem payload);
 
     void onItemRangedChanged(int positionStart, int itemCount);
 
@@ -19,5 +19,5 @@ public interface ListListener<K> {
 
     void onItemRangeRemoved(int positionStart, int itemCount);
 
-    void onItemRemoved(int position, K payload);
+    void onItemRemoved(int position, AdapterItem payload);
 }

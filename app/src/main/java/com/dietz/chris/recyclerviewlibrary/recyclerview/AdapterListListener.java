@@ -6,7 +6,7 @@ import android.support.v7.widget.RecyclerView;
 /**
  *
  */
-public class AdapterListListener<K> implements ListListener<K> {
+public class AdapterListListener implements ListListener {
 
     public final RecyclerView.Adapter mAdapter;
 
@@ -20,17 +20,17 @@ public class AdapterListListener<K> implements ListListener<K> {
     }
 
     @Override
-    public void onItemChanged(int atPosition, K payload) {
+    public void onItemChanged(int atPosition, AdapterItem payload) {
         mAdapter.notifyItemChanged(atPosition);
     }
 
     @Override
-    public void onItemInserted(int atPosition, K payload) {
+    public void onItemInserted(int atPosition, AdapterItem payload) {
         mAdapter.notifyItemInserted(atPosition);
     }
 
     @Override
-    public void onItemMoved(int fromPosition, int toPosition, K payload) {
+    public void onItemMoved(int fromPosition, int toPosition, AdapterItem payload) {
         mAdapter.notifyItemMoved(fromPosition, toPosition);
     }
 
@@ -50,7 +50,7 @@ public class AdapterListListener<K> implements ListListener<K> {
     }
 
     @Override
-    public void onItemRemoved(int position, K payload) {
+    public void onItemRemoved(int position, AdapterItem payload) {
         mAdapter.notifyItemRemoved(position);
     }
 }

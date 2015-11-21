@@ -32,7 +32,7 @@ interface AdapterListener {
      * @param size
      *      Number of items that were added.
      */
-    void itemsAdded(@NonNull AdapterItemGroup container, @NonNull int fromPosition, int size);
+    void itemsAdded(@NonNull AdapterItemGroup container, int fromPosition, int size);
 
     /**
      * An item was removed from the provided container.
@@ -54,5 +54,5 @@ interface AdapterListener {
      * @param size
      *      Number of items that were removed.
      */
-    void itemsRemoved(@NonNull AdapterItemGroup container, @NonNull int fromPosition, @NonNull int size);
+    void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size);
 }

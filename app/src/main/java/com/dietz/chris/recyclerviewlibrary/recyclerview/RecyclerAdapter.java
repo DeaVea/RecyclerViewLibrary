@@ -8,37 +8,37 @@ import android.view.ViewGroup;
 /**
  *
  */
-public abstract class RecyclerAdapter<K extends AdapterItem> extends RecyclerView.Adapter<ViewHolder<K>> {
+public abstract class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends AdapterItem>> {
 
     private static LayoutInflater mInflater;
 
-    private final AdapterList<K> mList;
+    private final AdapterList mList;
 
     public RecyclerAdapter() {
-        mList = new AdapterList<>();
-        mList.setListListener(new AdapterListListener<K>(this));
+        mList = new AdapterList();
+        mList.setListListener(new AdapterListListener(this));
     }
 
-    public void addItem(K item) {
+    public void addItem(AdapterItem item) {
         mList.add(item);
     }
 
-    public void removeItem(K item) {
+    public void removeItem(AdapterItem item) {
         mList.remove(item);
     }
 
     @Override
-    public final ViewHolder<K> onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final ViewHolder<? extends AdapterItem> onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mInflater == null) {
             mInflater = LayoutInflater.from(parent.getContext());
         }
         return onCreateViewHolder(mInflater, parent, viewType);
     }
 
-    public abstract ViewHolder<K> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    public abstract ViewHolder<? extends AdapterItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     @Override
-    public void onBindViewHolder(ViewHolder<K> holder, int position) {
+    public void onBindViewHolder(ViewHolder holder, int position) {
         holder.bind(mList.get(position));
     }
 

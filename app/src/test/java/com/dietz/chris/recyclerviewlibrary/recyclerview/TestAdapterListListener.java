@@ -8,7 +8,7 @@ import java.util.ArrayList;
 /**
  *
  */
-public class TestAdapterListListener implements ListListener<TestItem> {
+public class TestAdapterListListener implements ListListener {
 
     int dataSetChangeHit = 0;
     ArrayList<InsertObj> itemsPosInserted = new ArrayList<>();
@@ -38,17 +38,17 @@ public class TestAdapterListListener implements ListListener<TestItem> {
     }
 
     @Override
-    public void onItemChanged(int atPosition, TestItem payload) {
+    public void onItemChanged(int atPosition, AdapterItem payload) {
         itemsPosChanged.add(new ChangeObj(payload, atPosition));
     }
 
     @Override
-    public void onItemInserted(int atPosition, TestItem payload) {
+    public void onItemInserted(int atPosition, AdapterItem payload) {
         itemsPosInserted.add(new InsertObj(payload, atPosition));
     }
 
     @Override
-    public void onItemMoved(int fromPosition, int toPosition, TestItem payload) {
+    public void onItemMoved(int fromPosition, int toPosition, AdapterItem payload) {
         itemsMoved.add(new MoveObj(payload, fromPosition, toPosition));
     }
 
@@ -68,36 +68,36 @@ public class TestAdapterListListener implements ListListener<TestItem> {
     }
 
     @Override
-    public void onItemRemoved(int position, TestItem payload) {
+    public void onItemRemoved(int position, AdapterItem payload) {
 
     }
 
     public static class ChangeObj {
-        TestItem item;
+        AdapterItem item;
         int position;
 
-        public ChangeObj(TestItem item, int position) {
+        public ChangeObj(AdapterItem item, int position) {
             this.item = item;
             this.position = position;
         }
     }
 
     public static class InsertObj {
-        TestItem item;
+        AdapterItem item;
         int position;
 
-        public InsertObj(TestItem item, int position) {
+        public InsertObj(AdapterItem item, int position) {
             this.item = item;
             this.position = position;
         }
     }
 
     public static class MoveObj {
-        TestItem item;
+        AdapterItem item;
         int fromPosition;
         int toPosition;
 
-        public MoveObj(TestItem item, int fromPosition, int toPosition) {
+        public MoveObj(AdapterItem item, int fromPosition, int toPosition) {
             this.item = item;
             this.fromPosition = fromPosition;
             this.toPosition = toPosition;

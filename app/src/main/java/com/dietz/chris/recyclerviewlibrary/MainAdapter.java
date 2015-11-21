@@ -1,6 +1,5 @@
 package com.dietz.chris.recyclerviewlibrary;
 
-import android.app.LauncherActivity;
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -13,7 +12,7 @@ import com.dietz.chris.recyclerviewlibrary.recyclerview.ViewHolder;
 /**
  *
  */
-public class MainAdapter extends RecyclerAdapter<LabelItem> {
+public class MainAdapter extends RecyclerAdapter {
 
     public interface MainAdapterListener {
         void onItemClicked(LabelItem item);

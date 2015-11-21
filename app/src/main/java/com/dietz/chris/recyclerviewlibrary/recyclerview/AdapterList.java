@@ -5,25 +5,25 @@ import android.support.annotation.Nullable;
 /**
  *
  */
-public class AdapterList<K extends AdapterItem> {
+public class AdapterList {
 
-    private final AdapterItemCollection<K> mMainList;
+    private final AdapterItemCollection mMainList;
 
-    private final InternalListListener<K> mListListener;
+    private final InternalListListener mListListener;
 
     public AdapterList() {
-        mMainList = new AdapterItemCollection<>(mListListener = new InternalListListener<>());
+        mMainList = new AdapterItemCollection(mListListener = new InternalListListener());
     }
 
-    public void setListListener(ListListener<K> listListener) {
+    public void setListListener(ListListener listListener) {
         mListListener.setInternalListener(listListener);
     }
 
-    public void add(K item) {
+    public void add(AdapterItem item) {
         mMainList.addOrUpdate(item);
     }
 
-    public void remove(K item) {
+    public void remove(AdapterItem item) {
         mMainList.remove(item);
     }
 
@@ -31,7 +31,7 @@ public class AdapterList<K extends AdapterItem> {
         return mMainList.size();
     }
 
-    public K get(int position) {
+    public <K extends AdapterItem> K get(int position) {
         return mMainList.get(position);
     }
 
@@ -43,16 +43,16 @@ public class AdapterList<K extends AdapterItem> {
         mMainList.clear();
     }
 
-    private static class InternalListListener<K extends AdapterItem> implements ListListener<K> {
+    private static class InternalListListener implements ListListener {
 
         @Nullable
-        private ListListener<K> mInternalListener;
+        private ListListener mInternalListener;
 
         public InternalListListener() {
             mInternalListener = null;
         }
 
-        public void setInternalListener(@Nullable ListListener<K> listener) {
+        public void setInternalListener(@Nullable ListListener listener) {
             mInternalListener = listener;
         }
 
@@ -64,21 +64,21 @@ public class AdapterList<K extends AdapterItem> {
         }
 
         @Override
-        public void onItemChanged(int atPosition, K payload) {
+        public void onItemChanged(int atPosition, AdapterItem payload) {
             if (mInternalListener != null) {
                 mInternalListener.onItemChanged(atPosition, payload);
             }
         }
 
         @Override
-        public void onItemInserted(int atPosition, K payload) {
+        public void onItemInserted(int atPosition, AdapterItem payload) {
             if (mInternalListener != null) {
                 mInternalListener.onItemInserted(atPosition, payload);
             }
         }
 
         @Override
-        public void onItemMoved(int fromPosition, int toPosition, K payload) {
+        public void onItemMoved(int fromPosition, int toPosition, AdapterItem payload) {
             if (mInternalListener != null) {
                 mInternalListener.onItemMoved(fromPosition, toPosition, payload);
             }
@@ -106,7 +106,7 @@ public class AdapterList<K extends AdapterItem> {
         }
 
         @Override
-        public void onItemRemoved(int position, K payload) {
+        public void onItemRemoved(int position, AdapterItem payload) {
             if (mInternalListener != null) {
                 mInternalListener.onItemRemoved(position, payload);
             }

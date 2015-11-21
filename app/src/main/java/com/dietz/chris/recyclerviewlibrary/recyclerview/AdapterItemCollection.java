@@ -9,11 +9,11 @@ import java.util.HashMap;
 /**
  *
  */
-class AdapterItemCollection<K extends AdapterItem> {
+class AdapterItemCollection {
 
-    private final ArrayList<K> mList;
-    private final HashMap<String, K> mMap;
-    private final ListListener<K> mListener;
+    private final ArrayList<AdapterItem> mList;
+    private final HashMap<String, AdapterItem> mMap;
+    private final ListListener mListener;
     private final InternalItemListener mItemListener;
 
     /**
@@ -22,7 +22,7 @@ class AdapterItemCollection<K extends AdapterItem> {
      */
     private int mFullSize;
 
-    public AdapterItemCollection(ListListener<K> listener) {
+    public AdapterItemCollection(ListListener listener) {
         mList = new ArrayList<>();
         mMap = new HashMap<>();
         mItemListener = new InternalItemListener();
@@ -58,20 +58,34 @@ class AdapterItemCollection<K extends AdapterItem> {
      * @return
      *      Item contained at the given position.
      */
-    public K get(int position) {
-        return mList.get(position);
+    // If the returning call is not the right type, then something went wrong anyway so it should throw an exception.
+    @SuppressWarnings("unchecked")
+    public <K extends AdapterItem> K get(int position) {
+        int remaining = position;
+        int max = mList.size();
+        for (int i = 0; i < max; i++) {
+            AdapterItem item = mList.get(i);
+            if (remaining == 0) {
+                return (K) item;
+            } else if (remaining < item.getItemCount()){
+                return (K) item.getItem(remaining);
+            }
+            remaining -= item.getItemCount();
+        }
+        return null;
     }
 
     /**
-     * Removes the item passed in.  This will remove the item that has the underlying identifying key,
+     * Removes the item passed in.  This will remove the item that has the underlying identifying AdapterItemey,
      * so if the data structure is different then it will still be removed.
      * @param item
      *      Item to remove
      */
-    public void remove(@NonNull K item) {
-        K oldItem = mMap.remove(item.getIdentityKey());
+    public void remove(@NonNull AdapterItem item) {
+        AdapterItem oldItem = mMap.remove(item.getIdentityKey());
         if (oldItem != null) {
-            mFullSize -= oldItem.getItemCount();
+            int numberOfItems = oldItem.getItemCount();
+            mFullSize -= numberOfItems;
             int index = mList.indexOf(oldItem);
             mList.remove(oldItem);
             oldItem.unbindListener();
@@ -86,7 +100,7 @@ class AdapterItemCollection<K extends AdapterItem> {
      * @return
      *      New position of the item.
      */
-    public int addOrUpdate(@NonNull K item) {
+    public int addOrUpdate(@NonNull AdapterItem item) {
         int position;
         if (mMap.containsKey(item.getIdentityKey())) {
             position = updateInternal(item);
@@ -96,8 +110,8 @@ class AdapterItemCollection<K extends AdapterItem> {
         return position;
     }
 
-    private int updateInternal(K item) {
-        K oldItem = mMap.get(item.getIdentityKey());
+    private int updateInternal(AdapterItem item) {
+        AdapterItem oldItem = mMap.get(item.getIdentityKey());
         oldItem.unbindListener();
         item.bindList(mItemListener);
 
@@ -119,7 +133,7 @@ class AdapterItemCollection<K extends AdapterItem> {
         return newPosition;
     }
 
-    private int addInternal(K item) {
+    private int addInternal(AdapterItem item) {
         item.bindList(mItemListener);
         mMap.put(item.getIdentityKey(), item);
         int position = Utils.getPosition(item, mList);
@@ -143,17 +157,17 @@ class AdapterItemCollection<K extends AdapterItem> {
         @Override
         public void itemChanged(@NonNull AdapterItem item) {
             int realIndex = mList.indexOf(item);
-            mListener.onItemChanged(realIndex, (K) item);
+            mListener.onItemChanged(realIndex, item);
         }
 
         @Override
         public void itemAdded(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int atPosition) {
             int realIndex = mList.indexOf(container) + atPosition + 1;
-            mListener.onItemInserted(realIndex, (K) item);
+            mListener.onItemInserted(realIndex, item);
         }
 
         @Override
-        public void itemsAdded(@NonNull AdapterItemGroup container, @NonNull int fromPosition, int size) {
+        public void itemsAdded(@NonNull AdapterItemGroup container, int fromPosition, int size) {
             int realIndex = mList.indexOf(container) + fromPosition + 1;
             mListener.onItemRangeInserted(realIndex, size);
         }
@@ -161,17 +175,17 @@ class AdapterItemCollection<K extends AdapterItem> {
         @Override
         public void itemRemoved(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int fromPosition) {
             int realIndex = mList.indexOf(container) + fromPosition + 1;
-            mListener.onItemRemoved(realIndex, (K) item);
+            mListener.onItemRemoved(realIndex, item);
         }
 
         @Override
-        public void itemsRemoved(@NonNull AdapterItemGroup container, @NonNull int fromPosition, @NonNull int size) {
+        public void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size) {
             int realIndex = mList.indexOf(container) + fromPosition + 1;
             mListener.onItemRangeRemoved(realIndex, size);
         }
     }
 
-    private static <K extends AdapterItem> boolean equals(K item, K item2) {
+    private static boolean equals(AdapterItem item, AdapterItem item2) {
         return item.getIdentityKey().equals(item2.getIdentityKey()) && item.hashCode() == item2.hashCode() && item.equals(item2);
     }
 

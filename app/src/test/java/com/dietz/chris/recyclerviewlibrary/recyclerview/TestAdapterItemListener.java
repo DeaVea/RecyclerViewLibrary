@@ -16,7 +16,7 @@ public class TestAdapterItemListener implements AdapterListener {
     }
 
     @Override
-    public void itemChanged(AdapterItem item) {
+    public void itemChanged(@NonNull AdapterItem item) {
         mChangedItems.add(item);
     }
 

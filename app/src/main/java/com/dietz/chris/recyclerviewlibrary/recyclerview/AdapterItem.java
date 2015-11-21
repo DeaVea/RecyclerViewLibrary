@@ -30,6 +30,13 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
         return 1;
     }
 
+    AdapterItem getItem(int position) {
+        if (position == 0) {
+            return this;
+        }
+        return null;
+    }
+
     /**
      * Bind a listener to this item.
      * @param listener
