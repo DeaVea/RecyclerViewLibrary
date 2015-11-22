@@ -29,7 +29,7 @@ public class LabelItem extends AdapterItem {
     }
 
     @Override
-    public int compareTo(AdapterItem another) {
+    public int compareTo(@NonNull AdapterItem another) {
         return getIdentityKey().compareTo(another.getIdentityKey());
     }
 }
