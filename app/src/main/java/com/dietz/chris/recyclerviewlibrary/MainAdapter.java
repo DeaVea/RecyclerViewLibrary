@@ -19,6 +19,7 @@ public class MainAdapter extends RecyclerAdapter {
     public static int TYPE_GROUP = 2;
 
     public interface MainAdapterListener {
+        void onItemClicked(GroupItem item);
         void onItemClicked(LabelItem item);
         void onAddItemToGroup(GroupItem group);
         void onAddGroupToGroup(GroupItem group);
@@ -69,6 +70,7 @@ public class MainAdapter extends RecyclerAdapter {
         public InternalGroupViewHolder(LayoutInflater inflater, ViewGroup parent, @LayoutRes int id) {
             super(inflater, parent, id);
             name = findView(R.id.txtLabelName);
+            itemView.setOnClickListener(this);
             findView(R.id.btnAddItem).setOnClickListener(this);
             findView(R.id.btnAddGroup).setOnClickListener(this);
             findView(R.id.btnDeleteGroup).setOnClickListener(this);
@@ -81,6 +83,10 @@ public class MainAdapter extends RecyclerAdapter {
 
         @Override
         public void onClick(View v) {
+            if (v == itemView) {
+                mMainAdapterListener.onItemClicked(getBoundItem());
+                return;
+            }
             switch (v.getId()) {
                 case R.id.btnAddItem:
                     mMainAdapterListener.onAddItemToGroup(getBoundItem());

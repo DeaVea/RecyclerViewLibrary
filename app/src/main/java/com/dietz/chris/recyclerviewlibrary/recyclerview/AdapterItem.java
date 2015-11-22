@@ -30,11 +30,42 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
         return 1;
     }
 
+    /**
+     * Returns the item at the given position or null if that item is not found.  A value of "0"
+     * should return "this" item while a value greater than "0" will return a item further in the collection.
+     *
+     * @param position
+     *      Position to retrieve the item.
+     * @return
+     *      The item at the given position or null if that item is not found.
+     */
     AdapterItem getItem(int position) {
         if (position == 0) {
             return this;
         }
         return null;
+    }
+
+    /**
+     * Remove an item from the current adapter item.
+     * @param item
+     *      Item to remove.
+     * @return
+     *      True if the item was removed or false if it was not successfully removed from the adapter item.
+     */
+    boolean removeItem(AdapterItem item) {
+        return false;
+    }
+
+    /**
+     * Returns true if the item is found in this adapter item.
+     * @param item
+     *      item to check.
+     * @return
+     *      True if the item is in this adapter item or false otherwise.
+     */
+    boolean containsItem(AdapterItem item) {
+        return false;
     }
 
     /**

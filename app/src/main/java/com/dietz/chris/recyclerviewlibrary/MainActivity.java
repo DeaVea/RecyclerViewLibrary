@@ -32,6 +32,11 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.MainA
     }
 
     @Override
+    public void onItemClicked(GroupItem item) {
+        adapter.removeItem(item);
+    }
+
+    @Override
     public void onItemClicked(LabelItem item) {
         adapter.removeItem(item);
     }

@@ -31,6 +31,28 @@ class AdapterItemCollection {
     }
 
     /**
+     * Returns true if the collection contains the given item.
+     * @param item
+     *      Item to check.
+     * @return
+     *      True if the item is in the collection or false otherwise.
+     */
+    public boolean contains(AdapterItem item) {
+        if (item == null) {
+            return false;
+        }
+        if (mMap.containsKey(item.getIdentityKey())) {
+            return true;
+        }
+        for (AdapterItem internalItem : mList) {
+            if (internalItem.containsItem(item)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Current size of the collection.
      * @return
      *      Current size of the entire collection.
@@ -76,21 +98,15 @@ class AdapterItemCollection {
     }
 
     /**
-     * Removes the item passed in.  This will remove the item that has the underlying identifying AdapterItemey,
+     * Removes the item passed in.  This will remove the item that has the underlying identifying AdapterItem key,
      * so if the data structure is different then it will still be removed.
      * @param item
      *      Item to remove
+     * @return
+     *      True if the item was removed or false otherwise.
      */
-    public void remove(@NonNull AdapterItem item) {
-        AdapterItem oldItem = mMap.remove(item.getIdentityKey());
-        if (oldItem != null) {
-            int numberOfItems = oldItem.getItemCount();
-            mFullSize -= numberOfItems;
-            int index = mList.indexOf(oldItem);
-            mList.remove(oldItem);
-            oldItem.unbindListener();
-            mListener.onItemRemoved(index, oldItem);
-        } // Else this is some weird item that nobody ever put in here.
+    public boolean remove(@NonNull AdapterItem item) {
+        return removeItemFromHere(item) | removeItemFromCollection(item);
     }
 
     /**
@@ -108,6 +124,39 @@ class AdapterItemCollection {
             position = addInternal(item);
         }
         return position;
+    }
+
+    /**
+     * Remove an item that's contained in this collection.
+     * @param item
+     *      Item to remove.  It must be in this collection.
+     */
+    private boolean removeItemFromHere(AdapterItem item) {
+        final AdapterItem oldItem = mMap.remove(item.getIdentityKey());
+        if (oldItem != null) {
+            int numberOfItems = oldItem.getItemCount();
+            mFullSize -= numberOfItems;
+            int index = mList.indexOf(oldItem);
+            mList.remove(oldItem);
+            mMap.remove(oldItem.getIdentityKey());
+            oldItem.unbindListener();
+            mListener.onItemRemoved(index, oldItem);
+            return true;
+        }
+        return false;
+    }
+
+    /**
+     * Remove an item that's contained in other items.
+     * @param item
+     *      Item to remove.  Does not have to be in this collection itself.
+     */
+    private boolean removeItemFromCollection(AdapterItem item) {
+        boolean removed = false;
+        for (AdapterItem internalItem : mList) {
+            removed |= internalItem.removeItem(item);
+        }
+        return removed;
     }
 
     private int updateInternal(AdapterItem item) {
@@ -162,24 +211,28 @@ class AdapterItemCollection {
 
         @Override
         public void itemAdded(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int atPosition) {
+            ++mFullSize;
             int realIndex = mList.indexOf(container) + atPosition + 1;
             mListener.onItemInserted(realIndex, item);
         }
 
         @Override
         public void itemsAdded(@NonNull AdapterItemGroup container, int fromPosition, int size) {
+            mFullSize += size;
             int realIndex = mList.indexOf(container) + fromPosition + 1;
             mListener.onItemRangeInserted(realIndex, size);
         }
 
         @Override
         public void itemRemoved(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int fromPosition) {
+            --mFullSize;
             int realIndex = mList.indexOf(container) + fromPosition + 1;
             mListener.onItemRemoved(realIndex, item);
         }
 
         @Override
         public void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size) {
+            mFullSize -= size;
             int realIndex = mList.indexOf(container) + fromPosition + 1;
             mListener.onItemRangeRemoved(realIndex, size);
         }

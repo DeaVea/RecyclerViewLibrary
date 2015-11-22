@@ -20,6 +20,11 @@ public abstract class AdapterItemGroup extends AdapterItem {
     }
 
     @Override
+    public final boolean removeItem(AdapterItem item) {
+        return mItems.remove(item);
+    }
+
+    @Override
     public AdapterItem getItem(int position) {
         if (position == 0) {
             return this;
@@ -40,6 +45,11 @@ public abstract class AdapterItemGroup extends AdapterItem {
     @Override
     public final void onClose() {
         notifyItemsRemoved(0, mItems.size());
+    }
+
+    @Override
+    public final boolean containsItem(AdapterItem item) {
+        return mItems.contains(item);
     }
 
     protected final void notifyItemsAdded(int startingAt, int size) {

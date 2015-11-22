@@ -39,9 +39,7 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
         //noinspection unchecked  The item will be the appropriate class if the types are all well and good.
-        int type = getItemViewType(position);
-        AdapterItem item = mList.get(position);
-        holder.bind(item);
+        holder.bind(mList.get(position));
     }
 
     @Override
