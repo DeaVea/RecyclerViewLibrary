@@ -23,6 +23,12 @@
             android:layout_height="wrap_content"
             android:text="Add Item"/>
 
+        <Button
+            android:id="@+id/idBtnAddGroup"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Add Group"/>
+
     </LinearLayout>
 
 </RelativeLayout>

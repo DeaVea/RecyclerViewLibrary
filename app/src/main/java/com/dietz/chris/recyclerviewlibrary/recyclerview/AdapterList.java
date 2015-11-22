@@ -36,7 +36,8 @@ public class AdapterList {
     }
 
     public int getType(int position) {
-        return mMainList.get(position).getType();
+        AdapterItem item = mMainList.get(position);
+        return item.getType();
     }
 
     public void clear() {

@@ -6,6 +6,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
+import com.dietz.chris.recyclerviewlibrary.recyclerview.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.recyclerview.RecyclerAdapter;
 import com.dietz.chris.recyclerviewlibrary.recyclerview.ViewHolder;
 
@@ -14,15 +15,26 @@ import com.dietz.chris.recyclerviewlibrary.recyclerview.ViewHolder;
  */
 public class MainAdapter extends RecyclerAdapter {
 
+    public static int TYPE_ITEM = 1;
+    public static int TYPE_GROUP = 2;
+
     public interface MainAdapterListener {
         void onItemClicked(LabelItem item);
+        void onAddItemToGroup(GroupItem group);
+        void onAddGroupToGroup(GroupItem group);
+        void onDeleteGroup(GroupItem group);
     }
 
     private MainAdapterListener mMainAdapterListener;
 
     @Override
-    public ViewHolder<LabelItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
-        return new InternalViewHolder(inflater, parent, R.layout.labelitem);
+    public ViewHolder<? extends AdapterItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+        if (viewType == TYPE_ITEM) {
+            return new InternalViewHolder(inflater, parent, R.layout.labelitem);
+        } else if (viewType == TYPE_GROUP) {
+            return new InternalGroupViewHolder(inflater, parent, R.layout.groupitem);
+        }
+        throw new IllegalArgumentException("viewType " + viewType + " is not supported in this adapter.");
     }
 
     public void setMainAdapterListener(MainAdapterListener listener) {
@@ -47,6 +59,39 @@ public class MainAdapter extends RecyclerAdapter {
         @Override
         public void onClick(View v) {
             mMainAdapterListener.onItemClicked(getBoundItem());
+        }
+    }
+
+    private class InternalGroupViewHolder extends ViewHolder<GroupItem> implements View.OnClickListener {
+
+        TextView name;
+
+        public InternalGroupViewHolder(LayoutInflater inflater, ViewGroup parent, @LayoutRes int id) {
+            super(inflater, parent, id);
+            name = findView(R.id.txtLabelName);
+            findView(R.id.btnAddItem).setOnClickListener(this);
+            findView(R.id.btnAddGroup).setOnClickListener(this);
+            findView(R.id.btnDeleteGroup).setOnClickListener(this);
+        }
+
+        @Override
+        public void onBind(GroupItem item) {
+            name.setText(item.getIdentityKey());
+        }
+
+        @Override
+        public void onClick(View v) {
+            switch (v.getId()) {
+                case R.id.btnAddItem:
+                    mMainAdapterListener.onAddItemToGroup(getBoundItem());
+                    break;
+                case R.id.btnAddGroup:
+                    mMainAdapterListener.onAddGroupToGroup(getBoundItem());
+                    break;
+                case R.id.btnDeleteGroup:
+                    mMainAdapterListener.onDeleteGroup(getBoundItem());
+                    break;
+            }
         }
     }
 }

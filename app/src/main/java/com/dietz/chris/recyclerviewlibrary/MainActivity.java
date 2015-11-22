@@ -12,6 +12,8 @@ import com.dietz.chris.recyclerviewlibrary.recyclerview.RecyclerAdapter;
 
 public class MainActivity extends AppCompatActivity implements MainAdapter.MainAdapterListener, View.OnClickListener {
 
+    private static final int TYPE_LABEL = MainAdapter.TYPE_ITEM;
+    private static final int TYPE_GROUP = MainAdapter.TYPE_GROUP;
     private MainAdapter adapter;
 
     @Override
@@ -26,6 +28,7 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.MainA
         adapter.setMainAdapterListener(this);
 
         findViewById(R.id.idBtnAddItem).setOnClickListener(this);
+        findViewById(R.id.idBtnAddGroup).setOnClickListener(this);
     }
 
     @Override
@@ -34,10 +37,28 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.MainA
     }
 
     @Override
+    public void onAddItemToGroup(GroupItem group) {
+        group.addOrUpdateItem(new LabelItem(TYPE_LABEL));
+    }
+
+    @Override
+    public void onAddGroupToGroup(GroupItem group) {
+        group.addOrUpdateItem(new GroupItem(TYPE_GROUP));
+    }
+
+    @Override
+    public void onDeleteGroup(GroupItem group) {
+        adapter.removeItem(group);
+    }
+
+    @Override
     public void onClick(View v) {
         switch (v.getId()) {
             case R.id.idBtnAddItem:
-                adapter.addItem(new LabelItem());
+                adapter.addItem(new LabelItem(TYPE_LABEL));
+                break;
+            case R.id.idBtnAddGroup:
+                adapter.addItem(new GroupItem(TYPE_GROUP));
                 break;
         }
     }
