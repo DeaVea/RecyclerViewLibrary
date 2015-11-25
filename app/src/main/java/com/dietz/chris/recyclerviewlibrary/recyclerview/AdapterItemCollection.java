@@ -142,11 +142,10 @@ class AdapterItemCollection {
             mMap.remove(oldItem.getIdentityKey());
             oldItem.unbindListener();
 
-            int heldItemsCount = oldItem.getItemCount();
-            if (heldItemsCount == 1) {
+            if (numberOfItems == 1) {
                 mListener.onItemRemoved(indexInFull, oldItem);
             } else {
-                mListener.onItemRangeRemoved(indexInFull, heldItemsCount);
+                mListener.onItemRangeRemoved(indexInFull, numberOfItems);
             }
             return true;
         }

@@ -126,7 +126,9 @@ public abstract class AdapterItemGroup extends AdapterItem {
 
         @Override
         public void onItemRangeRemoved(int positionStart, int itemCount) {
-
+            if (isOpen()) {
+                notifyItemsRemoved(positionStart, itemCount);
+            }
         }
 
         @Override
