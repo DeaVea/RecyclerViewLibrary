@@ -137,10 +137,17 @@ class AdapterItemCollection {
             int numberOfItems = oldItem.getItemCount();
             mFullSize -= numberOfItems;
             int index = mList.indexOf(oldItem);
+            final int indexInFull = Utils.adjustPositionForItems(index, mList);
             mList.remove(oldItem);
             mMap.remove(oldItem.getIdentityKey());
             oldItem.unbindListener();
-            mListener.onItemRemoved(index, oldItem);
+
+            int heldItemsCount = oldItem.getItemCount();
+            if (heldItemsCount == 1) {
+                mListener.onItemRemoved(indexInFull, oldItem);
+            } else {
+                mListener.onItemRangeRemoved(indexInFull, heldItemsCount);
+            }
             return true;
         }
         return false;
