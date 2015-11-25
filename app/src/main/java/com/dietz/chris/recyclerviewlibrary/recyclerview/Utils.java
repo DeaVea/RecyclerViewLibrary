@@ -24,6 +24,21 @@ class Utils {
      *      The position that the item should be in.
      */
     public static int getPosition(AdapterItem item, List<? extends AdapterItem> listToCheck) {
+        int positionInList = getPositionInList(item, listToCheck);
+        return adjustPositionForItems(positionInList, listToCheck);
+    }
+
+    /**
+     * This returns the position the item should be in for the current list without taking in to account
+     * the sub-items that the list may hold.
+     * @param item
+     *      Items to check.
+     * @param listToCheck
+     *      List to check.
+     * @return
+     *      position that this item should be in the list as if all other items were of size 1.
+     */
+    public static int getPositionInList(AdapterItem item, List<? extends AdapterItem> listToCheck) {
         int start = 0;
         int end = listToCheck.size() - 1;
         int positionToCheck;
@@ -43,5 +58,22 @@ class Utils {
             }
         }
         return start;
+    }
+
+    /**
+     * Readjusts the list to take in to account items that are greater than size 1.
+     * @param position
+     *      Position that the item should be in the list.
+     * @param listToCheck
+     *      List of items.
+     * @return
+     *      adjusted position.
+     */
+    public static int adjustPositionForItems(int position, List<? extends AdapterItem> listToCheck) {
+        int adjusted = position;
+        for (int i = 0; i < position; i++) {
+            adjusted += listToCheck.get(i).getItemCount() - 1;
+        }
+        return adjusted;
     }
 }

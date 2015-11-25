@@ -2,7 +2,6 @@ package com.dietz.chris.recyclerviewlibrary.recyclerview;
 
 import android.support.annotation.NonNull;
 
-
 import org.junit.Test;
 
 import java.util.ArrayList;
@@ -51,5 +50,39 @@ public class UtilsTest {
 
         position = Utils.getPosition(new TestItem("Z"), items);
         assertThat(position, equalTo(8));
+    }
+    
+    @Test
+    public void testGetPositionInListWithGroups() {
+        final TestGroupItem group1 = new TestGroupItem("B");
+        group1.addOrUpdateItem(new TestItem("A"));
+        group1.addOrUpdateItem(new TestItem("B"));
+        group1.addOrUpdateItem(new TestItem("C"));
+        final TestGroupItem group2 = new TestGroupItem("D");
+        group2.addOrUpdateItem(new TestItem("A"));
+        group2.addOrUpdateItem(new TestItem("B"));
+        group2.addOrUpdateItem(new TestItem("C"));
+        final TestGroupItem group3 = new TestGroupItem("F");
+        group3.addOrUpdateItem(new TestItem("A"));
+        group3.addOrUpdateItem(new TestItem("B"));
+        group3.addOrUpdateItem(new TestItem("C"));
+
+        final List<AdapterItem> items = new ArrayList<>();
+        items.add(group1);
+        items.add(group2);
+        items.add(group3);
+        
+        int position = Utils.getPosition(new TestItem("A"), items);
+        assertThat(position, equalTo(0));
+
+        position = Utils.getPosition(new TestItem("C"), items);
+        assertThat(position, equalTo(4));
+
+        position = Utils.getPosition(new TestItem("E"), items);
+        assertThat(position, equalTo(8));
+
+        position = Utils.getPosition(new TestItem("Z"), items);
+        assertThat(position, equalTo(12));
+        
     }
 }

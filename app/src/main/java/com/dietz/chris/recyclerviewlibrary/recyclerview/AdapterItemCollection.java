@@ -166,37 +166,44 @@ class AdapterItemCollection {
 
         mMap.put(item.getIdentityKey(), item);
 
-        int oldPosition = mList.indexOf(oldItem);
-        mList.remove(oldPosition);
+        int oldPositionInMyList = mList.indexOf(oldItem);
+        int oldPositionInOverallList = Utils.adjustPositionForItems(oldPositionInMyList, mList);
+        mList.remove(oldPositionInMyList);
 
-        int newPosition = Utils.getPosition(item, mList);
-        mList.add(newPosition, item);
+        int newPositionInMyList = Utils.getPositionInList(item, mList);
+        int newPositionInOverallList = Utils.adjustPositionForItems(newPositionInMyList, mList);
+        if (newPositionInMyList >= mList.size()) {
+            mList.add(item);
+        } else {
+            mList.add(newPositionInMyList, item);
+        }
 
         mFullSize += item.getItemCount() - oldItem.getItemCount();
 
-        if (oldPosition == newPosition) {
-            mListener.onItemChanged(newPosition, item);
+        if (newPositionInOverallList == oldPositionInOverallList) {
+            mListener.onItemChanged(newPositionInMyList, item);
         } else {
-            mListener.onItemMoved(oldPosition, newPosition, item);
+            mListener.onItemMoved(oldPositionInOverallList, newPositionInOverallList, item);
         }
-        return newPosition;
+        return newPositionInOverallList;
     }
 
     private int addInternal(AdapterItem item) {
         item.bindList(mItemListener);
         mMap.put(item.getIdentityKey(), item);
-        int position = Utils.getPosition(item, mList);
-        if (position > mList.size()) {
+        int positionInMyList = Utils.getPositionInList(item, mList);
+        int positionInOverallList = Utils.adjustPositionForItems(positionInMyList, mList);
+
+        if (positionInMyList >= mList.size()) {
             mList.add(item);
-            position = mList.size() - 1;
         } else {
-            mList.add(position, item);
+            mList.add(positionInMyList, item);
         }
 
         mFullSize += item.getItemCount();
 
-        mListener.onItemInserted(position, item);
-        return position;
+        mListener.onItemInserted(positionInOverallList, item);
+        return positionInOverallList;
     }
 
     // All items in this list will be of type "K".  No need to validate it.
@@ -205,35 +212,35 @@ class AdapterItemCollection {
 
         @Override
         public void itemChanged(@NonNull AdapterItem item) {
-            int realIndex = mList.indexOf(item);
+            int realIndex = Utils.getPosition(item, mList);
             mListener.onItemChanged(realIndex, item);
         }
 
         @Override
         public void itemAdded(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int atPosition) {
             ++mFullSize;
-            int realIndex = mList.indexOf(container) + atPosition + 1;
+            int realIndex = Utils.getPosition(container, mList) + atPosition + 1;
             mListener.onItemInserted(realIndex, item);
         }
 
         @Override
         public void itemsAdded(@NonNull AdapterItemGroup container, int fromPosition, int size) {
             mFullSize += size;
-            int realIndex = mList.indexOf(container) + fromPosition + 1;
+            int realIndex = Utils.getPosition(container, mList) + fromPosition + 1;
             mListener.onItemRangeInserted(realIndex, size);
         }
 
         @Override
         public void itemRemoved(@NonNull AdapterItemGroup container, @NonNull AdapterItem item, int fromPosition) {
             --mFullSize;
-            int realIndex = mList.indexOf(container) + fromPosition + 1;
+            int realIndex = Utils.getPosition(container, mList) + fromPosition + 1;
             mListener.onItemRemoved(realIndex, item);
         }
 
         @Override
         public void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size) {
             mFullSize -= size;
-            int realIndex = mList.indexOf(container) + fromPosition + 1;
+            int realIndex = Utils.getPosition(container, mList) + fromPosition + 1;
             mListener.onItemRangeRemoved(realIndex, size);
         }
     }
