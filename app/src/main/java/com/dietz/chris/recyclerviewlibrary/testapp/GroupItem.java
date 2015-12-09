@@ -1,19 +1,22 @@
-package com.dietz.chris.recyclerviewlibrary;
+package com.dietz.chris.recyclerviewlibrary.testapp;
 
 import android.support.annotation.NonNull;
+
+import com.dietz.chris.recyclerviewlibrary.AdapterItem;
+import com.dietz.chris.recyclerviewlibrary.AdapterItemGroup;
 
 /**
  *
  */
-public class LabelItem extends AdapterItem {
+public class GroupItem extends AdapterItemGroup {
 
     static int count = 0;
 
     private final int type;
     private final String LABEL;
 
-    public LabelItem(int type) {
-        LABEL = "LabelItem " + ++count;
+    public GroupItem(int type) {
+        LABEL = "Group Item " + ++count;
         this.type = type;
     }
 

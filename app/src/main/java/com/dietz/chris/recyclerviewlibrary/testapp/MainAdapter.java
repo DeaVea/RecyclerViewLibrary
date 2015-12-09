@@ -1,10 +1,14 @@
-package com.dietz.chris.recyclerviewlibrary;
+package com.dietz.chris.recyclerviewlibrary.testapp;
 
 import android.support.annotation.LayoutRes;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
+
+import com.dietz.chris.recyclerviewlibrary.AdapterItem;
+import com.dietz.chris.recyclerviewlibrary.RecyclerAdapter;
+import com.dietz.chris.recyclerviewlibrary.ViewHolder;
 
 /**
  *
