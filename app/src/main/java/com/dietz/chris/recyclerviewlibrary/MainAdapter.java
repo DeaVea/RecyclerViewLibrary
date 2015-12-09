@@ -6,10 +6,6 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dietz.chris.recyclerviewlibrary.recyclerview.AdapterItem;
-import com.dietz.chris.recyclerviewlibrary.recyclerview.RecyclerAdapter;
-import com.dietz.chris.recyclerviewlibrary.recyclerview.ViewHolder;
-
 /**
  *
  */

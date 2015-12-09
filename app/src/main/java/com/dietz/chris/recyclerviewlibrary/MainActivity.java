@@ -7,9 +7,6 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.View;
 
-import com.dietz.chris.recyclerviewlibrary.recyclerview.AdapterItem;
-import com.dietz.chris.recyclerviewlibrary.recyclerview.RecyclerAdapter;
-
 public class MainActivity extends AppCompatActivity implements MainAdapter.MainAdapterListener, View.OnClickListener {
 
     private static final int TYPE_LABEL = MainAdapter.TYPE_ITEM;

@@ -2,8 +2,6 @@ package com.dietz.chris.recyclerviewlibrary;
 
 import android.support.annotation.NonNull;
 
-import com.dietz.chris.recyclerviewlibrary.recyclerview.AdapterItem;
-
 /**
  *
  */
