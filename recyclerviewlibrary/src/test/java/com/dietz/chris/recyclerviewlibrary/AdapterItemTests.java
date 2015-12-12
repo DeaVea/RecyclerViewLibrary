@@ -3,6 +3,8 @@ package com.dietz.chris.recyclerviewlibrary;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -61,5 +63,24 @@ public class AdapterItemTests {
         item.open();
 
         assertThat(item.isOpen(), equalTo(false));
+    }
+
+    @Test
+    public void testPayload() {
+        TestPayload payload1 = new TestPayload("TestPayload1");
+        final TestItem<TestPayload> item = new TestItem<>(payload1);
+
+        assertThat(item.getPayload(), notNullValue());
+        assertThat(item.getIdentityKey(), notNullValue());
+        assertThat(item.hasPayload(item.getPayload()), equalTo(true));
+
+        final TestGroupItem<TestPayload> group = new TestGroupItem<>("TestGroup");
+        assertThat(group.getPayload(), nullValue());
+        assertThat(group.hasPayload(payload1), equalTo(false));
+
+        group.addOrUpdateItem(item);
+        
+        assertThat(group.hasPayload(payload1), equalTo(true));
+
     }
 }

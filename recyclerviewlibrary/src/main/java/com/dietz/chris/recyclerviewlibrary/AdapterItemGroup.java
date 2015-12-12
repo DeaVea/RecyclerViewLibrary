@@ -3,11 +3,21 @@ package com.dietz.chris.recyclerviewlibrary;
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
  */
-public abstract class AdapterItemGroup extends AdapterItem {
+public abstract class AdapterItemGroup<K> extends AdapterItem<K> {
     private final AdapterItemCollection mItems;
 
     public AdapterItemGroup() {
+        this(null);
+    }
+
+    public AdapterItemGroup(K payload) {
+        super(payload);
         mItems = new AdapterItemCollection(new InternalListener());
+    }
+
+    @Override
+    public final boolean hasPayload(Object payload) {
+        return super.hasPayload(payload) || mItems.containsPayload(payload);
     }
 
     @Override

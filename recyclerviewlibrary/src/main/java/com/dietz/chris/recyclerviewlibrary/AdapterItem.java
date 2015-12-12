@@ -6,16 +6,55 @@ import android.support.annotation.Nullable;
 /**
  *
  */
-public abstract class AdapterItem implements Comparable<AdapterItem> {
+public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
 
+    private K mPayload;
+
+    /**
+     * Keep this null until there is actually a key.
+     */
+    private String mDefaultIdentityKey = null;
     private boolean mIsSolid;
     private boolean mIsOpen;
     private AdapterListener mListener;
 
     public AdapterItem() {
+        this(null);
+    }
+
+    public AdapterItem(K payload) {
         mIsOpen = true;
         mIsSolid = false;
         mListener = null;
+        mPayload = payload;
+    }
+
+    /**
+     * Sets the payload that is backed by this adapter item.
+     * @param payload
+     */
+    public void setPayload(K payload) {
+        mPayload = payload;
+        mDefaultIdentityKey = generateDefaultKey();
+        notifyListChange();
+    }
+
+    /**
+     * Returns the paylaod set by this adapter item.
+     * @return
+     */
+    public K getPayload() {
+        return mPayload;
+    }
+
+    /**
+     * Check if the payload provided is in the collection.  Will return false if this doesn't have a payload
+     * or if the payload passed in is null.
+     */
+    public boolean hasPayload(Object payload) {
+        return (mPayload != null && payload != null) &&
+               mPayload.getClass().equals(payload.getClass()) &&
+               ((payload == mPayload || (mPayload.hashCode() == payload.hashCode() && mPayload.equals(payload))));
     }
 
     /**
@@ -171,7 +210,12 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
      *      A unique key used to identify the object.
      */
     @NonNull
-    public abstract String getIdentityKey();
+    public String getIdentityKey() {
+        if (mDefaultIdentityKey == null) {
+            mDefaultIdentityKey = generateDefaultKey();
+        }
+        return mDefaultIdentityKey;
+    }
 
     /**
      * Type of item that this item represents.
@@ -179,4 +223,11 @@ public abstract class AdapterItem implements Comparable<AdapterItem> {
      *      Value that this item represents in the list.
      */
     public abstract int getType();
+
+    private String generateDefaultKey() {
+        if (mPayload != null) {
+            return mPayload.hashCode() + "_" + mPayload.toString();
+        }
+        return hashCode() + "_" + toString();
+    }
 }

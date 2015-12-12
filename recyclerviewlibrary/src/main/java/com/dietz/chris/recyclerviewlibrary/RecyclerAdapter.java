@@ -1,5 +1,6 @@
 package com.dietz.chris.recyclerviewlibrary;
 
+import android.support.annotation.NonNull;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.ViewGroup;
@@ -7,7 +8,7 @@ import android.view.ViewGroup;
 /**
  *
  */
-public abstract class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends AdapterItem>> {
+public abstract class RecyclerAdapter<K> extends RecyclerView.Adapter<ViewHolder<? extends AdapterItem>> {
 
     private static LayoutInflater mInflater;
 
@@ -18,8 +19,8 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? 
         mList.setListListener(new AdapterListListener(this));
     }
 
-    public void addItem(AdapterItem item) {
-        mList.add(item);
+    public void addItem(K item) {
+        mList.add(new DefaultAdapterItem<>(item));
     }
 
     public void removeItem(AdapterItem item) {
@@ -50,5 +51,22 @@ public abstract class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? 
     @Override
     public int getItemCount() {
         return mList.size();
+    }
+
+    private static class DefaultAdapterItem<K> extends AdapterItem<K> {
+
+        public DefaultAdapterItem(K payload) {
+            super(payload);
+        }
+
+        @Override
+        public int getType() {
+            return 0;
+        }
+
+        @Override
+        public int compareTo(@NonNull AdapterItem another) {
+            return another.compareTo(this);
+        }
     }
 }

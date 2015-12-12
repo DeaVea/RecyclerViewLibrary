@@ -31,6 +31,18 @@ class AdapterItemCollection {
     }
 
     /**
+     * Returns if the payload is in the list.
+     */
+    public boolean containsPayload(Object payload) {
+        for (AdapterItem items : mList) {
+            if (items.hasPayload(payload)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Returns true if the collection contains the given item.
      * @param item
      *      Item to check.
