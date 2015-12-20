@@ -5,7 +5,7 @@ import android.support.annotation.Nullable;
 /**
  *
  */
-public class AdapterList {
+class AdapterList {
 
     private final AdapterItemCollection mMainList;
 
@@ -21,6 +21,10 @@ public class AdapterList {
 
     public void add(AdapterItem item) {
         mMainList.addOrUpdate(item);
+    }
+
+    public int removePayload(Object payload) {
+        return mMainList.removeItemWithPayload(payload);
     }
 
     public void remove(AdapterItem item) {

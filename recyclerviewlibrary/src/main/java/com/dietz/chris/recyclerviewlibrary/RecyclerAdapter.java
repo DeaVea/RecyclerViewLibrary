@@ -23,8 +23,8 @@ public abstract class RecyclerAdapter<K> extends RecyclerView.Adapter<ViewHolder
         mList.add(new DefaultAdapterItem<>(item));
     }
 
-    public void removeItem(AdapterItem item) {
-        mList.remove(item);
+    public void removeItem(K item) {
+        mList.removePayload(item);
     }
 
     @Override
