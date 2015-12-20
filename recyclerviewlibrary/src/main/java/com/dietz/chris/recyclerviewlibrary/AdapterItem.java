@@ -52,9 +52,18 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
      * or if the payload passed in is null.
      */
     public boolean hasPayload(Object payload) {
-        return (mPayload != null && payload != null) &&
-               mPayload.getClass().equals(payload.getClass()) &&
-               ((payload == mPayload || (mPayload.hashCode() == payload.hashCode() && mPayload.equals(payload))));
+        return Utils.itemsEqual(mPayload, payload);
+    }
+
+    /**
+     * If this is a group, this will remove the item that contains the payload from the group.
+     * @param payload
+     *      Payload to remove from the group.
+     * @return
+     *      Number of items that were found and removed.
+     */
+    int removeItemWithPayload(Object payload) {
+        return 0;
     }
 
     /**
@@ -83,6 +92,17 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
             return this;
         }
         return null;
+    }
+
+    /**
+     * Add an item from the current adapter item.
+     * @param item
+     *      Item to remove.
+     * @return
+     *      True if the item was added or false if it was not successfully added from the adapter item.
+     */
+    boolean addOrUpdateItem(AdapterItem item) {
+        return false;
     }
 
     /**

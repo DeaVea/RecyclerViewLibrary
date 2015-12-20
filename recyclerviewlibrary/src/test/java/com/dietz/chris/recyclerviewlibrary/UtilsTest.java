@@ -81,6 +81,20 @@ public class UtilsTest {
 
         position = Utils.getPosition(new TestItem("Z"), items);
         assertThat(position, equalTo(12));
-        
+    }
+
+    @Test
+    public void equalsTest(){
+        TestPayload payload1 = new TestPayload("A");
+        TestPayload payload2 = new TestPayload("B");
+        TestPayload payload3 = new TestPayload("A");
+
+        assertThat(Utils.itemsEqual(null, null), equalTo(true));
+        assertThat(Utils.itemsEqual(payload1, null), equalTo(false));
+        assertThat(Utils.itemsEqual(null, payload1), equalTo(false));
+        assertThat(Utils.itemsEqual(payload1, payload1), equalTo(true));
+        assertThat(Utils.itemsEqual(payload1, payload2), equalTo(false));
+        assertThat(Utils.itemsEqual(payload1, payload3), equalTo(true));
+        assertThat(Utils.itemsEqual(payload3, payload1), equalTo(true));
     }
 }

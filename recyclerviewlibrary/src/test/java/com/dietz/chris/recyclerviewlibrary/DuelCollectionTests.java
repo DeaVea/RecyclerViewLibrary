@@ -145,4 +145,89 @@ public class DuelCollectionTests {
         assertThat(listListener.lastItemRangeRemoved().startPosition, equalTo(0));
         assertThat(listListener.lastItemRangeRemoved().count, equalTo(5));
     }
+
+    @Test
+    public void containsPayloadTests() {
+        final AdapterItemCollection items = new AdapterItemCollection(null);
+
+        TestPayload payload1 = new TestPayload("A");
+        TestPayload payload2 = new TestPayload("B");
+        TestPayload payload3 = new TestPayload("C");
+        TestPayload payload4 = new TestPayload("D");
+        TestPayload payload5 = new TestPayload("A");
+
+        items.addOrUpdate(new TestItem<TestPayload>(payload1));
+        items.addOrUpdate(new TestItem<TestPayload>(payload2));
+        items.addOrUpdate(new TestItem<TestPayload>(payload3));
+        items.addOrUpdate(new TestItem<TestPayload>(payload4));
+        items.addOrUpdate(new TestItem<TestPayload>(payload5));
+
+        assertThat(items.containsPayload(payload1), equalTo(true));
+        assertThat(items.containsPayload(payload2), equalTo(true));
+        assertThat(items.containsPayload(payload3), equalTo(true));
+        assertThat(items.containsPayload(payload4), equalTo(true));
+        assertThat(items.containsPayload(payload5), equalTo(true));
+    }
+
+    @Test
+    public void removePayloadTests() {
+        final AdapterItemCollection items = new AdapterItemCollection(null);
+
+        TestPayload payload1 = new TestPayload("A");
+        TestPayload payload2 = new TestPayload("B");
+        TestPayload payload3 = new TestPayload("C");
+        TestPayload payload4 = new TestPayload("D");
+        TestPayload payload5 = new TestPayload("A");
+
+        items.addOrUpdate(new TestItem<TestPayload>(payload1));
+        items.addOrUpdate(new TestItem<TestPayload>(payload2));
+        items.addOrUpdate(new TestItem<TestPayload>(payload3));
+        items.addOrUpdate(new TestItem<TestPayload>(payload4));
+        items.addOrUpdate(new TestItem<TestPayload>(payload5));
+
+        assertThat(items.removeItemWithPayload(payload1), equalTo(1));
+        assertThat(items.removeItemWithPayload(payload3), equalTo(1));
+        assertThat(items.removeItemWithPayload(payload1), equalTo(0));
+        assertThat(items.removeItemWithPayload(payload5), equalTo(0));
+        assertThat(items.removeItemWithPayload(payload4), equalTo(1));
+        assertThat(items.removeItemWithPayload(payload2), equalTo(1));
+
+        items.clear();
+
+        TestPayload groupPayload1 = new TestPayload("Group1");
+        TestGroupItem<TestPayload> group1 = new TestGroupItem<TestPayload>(groupPayload1);
+        group1.addOrUpdateItem(new TestItem<TestPayload>(payload1));
+        group1.addOrUpdateItem(new TestItem<TestPayload>(payload2));
+
+        TestPayload groupPayload2 = new TestPayload("Group2");
+        TestGroupItem<TestPayload> group2 = new TestGroupItem<TestPayload>(groupPayload2);
+        group2.addOrUpdateItem(new TestItem<TestPayload>(payload3));
+        group2.addOrUpdateItem(new TestItem<TestPayload>(payload4));
+
+        TestPayload groupPayload3 = new TestPayload("Group3");
+        TestGroupItem<TestPayload> group3 = new TestGroupItem<TestPayload>(groupPayload3);
+        group3.addOrUpdateItem(new TestItem<TestPayload>(payload1));
+        group3.addOrUpdateItem(new TestItem<TestPayload>(payload2));
+        group3.addOrUpdateItem(new TestItem<TestPayload>(payload3));
+        group3.addOrUpdateItem(new TestItem<TestPayload>(payload4));
+
+        items.addOrUpdate(group1);
+        items.addOrUpdate(group2);
+        items.addOrUpdate(group3);
+
+        assertThat(items.removeItemWithPayload(payload1), equalTo(2));
+        assertThat(group1.getItemCount(), equalTo(2));
+        assertThat(group3.getItemCount(), equalTo(4));
+
+        assertThat(items.removeItemWithPayload(payload1), equalTo(0));
+
+        assertThat(items.removeItemWithPayload(payload3), equalTo(2));
+        assertThat(group1.getItemCount(), equalTo(2));
+        assertThat(group2.getItemCount(), equalTo(2));
+        assertThat(group3.getItemCount(), equalTo(3));
+
+        assertThat(items.removeItemWithPayload(groupPayload3), equalTo(3));
+        assertThat(items.removeItemWithPayload(groupPayload1), equalTo(2));
+        assertThat(items.removeItemWithPayload(groupPayload2), equalTo(2));
+    }
 }

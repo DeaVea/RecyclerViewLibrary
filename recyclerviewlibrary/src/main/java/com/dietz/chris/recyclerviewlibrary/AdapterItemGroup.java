@@ -21,12 +21,19 @@ public abstract class AdapterItemGroup<K> extends AdapterItem<K> {
     }
 
     @Override
+    public final int removeItemWithPayload(Object payload){
+        return mItems.removeItemWithPayload(payload);
+    }
+
+    @Override
     public final int getItemCount() {
         return (isOpen()) ? 1 + mItems.size() :  1;
     }
 
-    public final void addOrUpdateItem(AdapterItem item) {
+    @Override
+    public final boolean addOrUpdateItem(AdapterItem item) {
         mItems.addOrUpdate(item);
+        return true;
     }
 
     @Override

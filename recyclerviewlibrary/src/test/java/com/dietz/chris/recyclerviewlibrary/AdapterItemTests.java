@@ -79,7 +79,7 @@ public class AdapterItemTests {
         assertThat(group.hasPayload(payload1), equalTo(false));
 
         group.addOrUpdateItem(item);
-        
+
         assertThat(group.hasPayload(payload1), equalTo(true));
 
     }
