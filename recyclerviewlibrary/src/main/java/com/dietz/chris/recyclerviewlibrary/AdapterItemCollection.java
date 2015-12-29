@@ -33,7 +33,7 @@ class AdapterItemCollection {
     /**
      * Returns if the payload is in the list.
      */
-    public boolean containsPayload(Object payload) {
+    public <K extends RecyclerItem> boolean containsPayload(K payload) {
         for (AdapterItem items : mList) {
             if (items.hasPayload(payload)) {
                 return true;
@@ -43,13 +43,30 @@ class AdapterItemCollection {
     }
 
     /**
+     * Finds the first item with the given payload.
+     * @param payload
+     *      Payload item to check
+     * @return
+     *      First item found that has the payload or null if it does not.
+     */
+    public <K extends RecyclerItem> AdapterItem findItemWithPayload(K payload) {
+        AdapterItem returnItem;
+        for (AdapterItem item : mList) {
+            if ((returnItem = item.getItemWithPayload(payload)) != null) {
+                return returnItem;
+            }
+        }
+        return null;
+    }
+
+    /**
      * Finds all the items that are in this list that contains the payload and removes it.
      * @param payload
      *      payload item to look for.
      * @return
      *      Number of items that were removed.
      */
-    public int removeItemWithPayload(Object payload) {
+    public <K extends RecyclerItem> int removeItemWithPayload(K payload) {
         int removedItems = 0;
         ArrayList<AdapterItem> itemsToRemove = new ArrayList<>();
         // TODO: This sucks.  Fix it.

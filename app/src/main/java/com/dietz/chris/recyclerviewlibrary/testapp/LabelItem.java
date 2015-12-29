@@ -2,12 +2,12 @@ package com.dietz.chris.recyclerviewlibrary.testapp;
 
 import android.support.annotation.NonNull;
 
-import com.dietz.chris.recyclerviewlibrary.AdapterItem;
+import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 /**
  *
  */
-public class LabelItem extends AdapterItem {
+public class LabelItem implements RecyclerItem {
 
     static int count = 0;
 
@@ -31,7 +31,7 @@ public class LabelItem extends AdapterItem {
     }
 
     @Override
-    public int compareTo(@NonNull AdapterItem another) {
+    public int compareTo(@NonNull RecyclerItem another) {
         return getIdentityKey().compareTo(another.getIdentityKey());
     }
 }

@@ -15,7 +15,7 @@ public class AdapterItemTests {
     @Test
     public void testOpen() {
         final TestAdapterItemListener listener = new TestAdapterItemListener();
-        final TestItem item = new TestItem("A");
+        final AdapterItem item = new AdapterItem<>(new TestItem("A"));
         item.bindList(listener);
 
         assertThat(item.isOpen(), equalTo(true));
@@ -38,7 +38,7 @@ public class AdapterItemTests {
 
     @Test
     public void testOpenLock() {
-        final TestItem item = new TestItem("A");
+        final AdapterItem item = new AdapterItem<>(new TestItem("A"));
 
         assertThat(item.isOpen(), equalTo(true));
 
@@ -67,20 +67,18 @@ public class AdapterItemTests {
 
     @Test
     public void testPayload() {
-        TestPayload payload1 = new TestPayload("TestPayload1");
-        final TestItem<TestPayload> item = new TestItem<>(payload1);
+        TestItem payload1 = new TestItem("TestItem1");
+        final AdapterItem item = new AdapterItem<>(new TestItem("TestItem1"));
 
         assertThat(item.getPayload(), notNullValue());
         assertThat(item.getIdentityKey(), notNullValue());
         assertThat(item.hasPayload(item.getPayload()), equalTo(true));
 
-        final TestGroupItem<TestPayload> group = new TestGroupItem<>("TestGroup");
-        assertThat(group.getPayload(), nullValue());
+        final AdapterItemGroup group = new AdapterItemGroup<>(new TestItem("Group1"));
         assertThat(group.hasPayload(payload1), equalTo(false));
 
         group.addOrUpdateItem(item);
 
         assertThat(group.hasPayload(payload1), equalTo(true));
-
     }
 }

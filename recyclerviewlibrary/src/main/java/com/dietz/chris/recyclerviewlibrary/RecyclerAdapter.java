@@ -8,7 +8,7 @@ import android.view.ViewGroup;
 /**
  *
  */
-public abstract class RecyclerAdapter<K> extends RecyclerView.Adapter<ViewHolder<? extends AdapterItem>> {
+public abstract class RecyclerAdapter<G extends RecyclerGroupItem, K extends RecyclerItem> extends RecyclerView.Adapter<ViewHolder<? extends RecyclerItem>> {
 
     private static LayoutInflater mInflater;
 
@@ -20,22 +20,38 @@ public abstract class RecyclerAdapter<K> extends RecyclerView.Adapter<ViewHolder
     }
 
     public void addItem(K item) {
-        mList.add(new DefaultAdapterItem<>(item));
+        mList.addItem(item);
+    }
+
+    public void addItem(G item) {
+        mList.addItem(item);
+    }
+
+    public void removeItem(G item) {
+        mList.removeItem(item);
     }
 
     public void removeItem(K item) {
-        mList.removePayload(item);
+        mList.removeItem(item);
+    }
+
+    public void addItemToGroup(G group, K item) {
+        mList.addItemToGroup(item, group);
+    }
+
+    public void addItemToGroup(G group, G otherGroup) {
+        mList.addItemToGroup(otherGroup, group);
     }
 
     @Override
-    public final ViewHolder<? extends AdapterItem> onCreateViewHolder(ViewGroup parent, int viewType) {
+    public final ViewHolder<? extends RecyclerItem> onCreateViewHolder(ViewGroup parent, int viewType) {
         if (mInflater == null) {
             mInflater = LayoutInflater.from(parent.getContext());
         }
         return onCreateViewHolder(mInflater, parent, viewType);
     }
 
-    public abstract ViewHolder<? extends AdapterItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
+    public abstract ViewHolder<? extends RecyclerItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType);
 
     @Override
     public void onBindViewHolder(ViewHolder holder, int position) {
@@ -51,22 +67,5 @@ public abstract class RecyclerAdapter<K> extends RecyclerView.Adapter<ViewHolder
     @Override
     public int getItemCount() {
         return mList.size();
-    }
-
-    private static class DefaultAdapterItem<K> extends AdapterItem<K> {
-
-        public DefaultAdapterItem(K payload) {
-            super(payload);
-        }
-
-        @Override
-        public int getType() {
-            return 0;
-        }
-
-        @Override
-        public int compareTo(@NonNull AdapterItem another) {
-            return another.compareTo(this);
-        }
     }
 }

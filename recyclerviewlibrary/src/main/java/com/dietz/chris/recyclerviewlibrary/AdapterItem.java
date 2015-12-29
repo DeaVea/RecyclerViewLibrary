@@ -6,7 +6,7 @@ import android.support.annotation.Nullable;
 /**
  *
  */
-public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
+class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
 
     private K mPayload;
 
@@ -18,11 +18,10 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
     private boolean mIsOpen;
     private AdapterListener mListener;
 
-    public AdapterItem() {
-        this(null);
-    }
-
     public AdapterItem(K payload) {
+        if (payload == null) {
+            throw new IllegalStateException("Payload must not be null.");
+        }
         mIsOpen = true;
         mIsSolid = false;
         mListener = null;
@@ -34,9 +33,26 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
      * @param payload
      */
     public void setPayload(K payload) {
+        if (payload == null) {
+            throw new IllegalStateException("Payload must not be null.");
+        }
         mPayload = payload;
         mDefaultIdentityKey = generateDefaultKey();
         notifyListChange();
+    }
+
+    /**
+     * Returns the item with the given payload.
+     * @param payload
+     *      Payload to check
+     * @return
+     *      First item found with the payload or null if it was not found.
+     */
+    <H extends RecyclerItem> AdapterItem getItemWithPayload(H payload) {
+        if (Utils.itemsEqual(mPayload, payload)) {
+            return this;
+        }
+        return null;
     }
 
     /**
@@ -51,8 +67,8 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
      * Check if the payload provided is in the collection.  Will return false if this doesn't have a payload
      * or if the payload passed in is null.
      */
-    public boolean hasPayload(Object payload) {
-        return Utils.itemsEqual(mPayload, payload);
+    public <H extends RecyclerItem> boolean hasPayload(H payload) {
+        return payload != null && mPayload.getIdentityKey().equals(payload.getIdentityKey());
     }
 
     /**
@@ -62,7 +78,7 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
      * @return
      *      Number of items that were found and removed.
      */
-    int removeItemWithPayload(Object payload) {
+    <H extends RecyclerItem> int removeItemWithPayload(H payload) {
         return 0;
     }
 
@@ -242,12 +258,20 @@ public abstract class AdapterItem<K> implements Comparable<AdapterItem> {
      * @return
      *      Value that this item represents in the list.
      */
-    public abstract int getType();
+    public int getType() {
+        return mPayload.getType();
+    }
 
     private String generateDefaultKey() {
         if (mPayload != null) {
-            return mPayload.hashCode() + "_" + mPayload.toString();
+            return (mPayload.getIdentityKey() != null) ? mPayload.getIdentityKey() : mPayload.hashCode() + "_" + mPayload.toString();
         }
         return hashCode() + "_" + toString();
+    }
+
+    @Override
+    public int compareTo(@NonNull AdapterItem another) {
+        // TODO: This is really weird.
+        return getPayload().compareTo(another.getPayload());
     }
 }

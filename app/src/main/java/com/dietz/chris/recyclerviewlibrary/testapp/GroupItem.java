@@ -2,13 +2,13 @@ package com.dietz.chris.recyclerviewlibrary.testapp;
 
 import android.support.annotation.NonNull;
 
-import com.dietz.chris.recyclerviewlibrary.AdapterItem;
-import com.dietz.chris.recyclerviewlibrary.AdapterItemGroup;
+import com.dietz.chris.recyclerviewlibrary.RecyclerGroupItem;
+import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 /**
  *
  */
-public class GroupItem extends AdapterItemGroup {
+public class GroupItem implements RecyclerGroupItem {
 
     static int count = 0;
 
@@ -32,7 +32,7 @@ public class GroupItem extends AdapterItemGroup {
     }
 
     @Override
-    public int compareTo(@NonNull AdapterItem another) {
+    public int compareTo(@NonNull RecyclerItem another) {
         return getIdentityKey().compareTo(another.getIdentityKey());
     }
 }

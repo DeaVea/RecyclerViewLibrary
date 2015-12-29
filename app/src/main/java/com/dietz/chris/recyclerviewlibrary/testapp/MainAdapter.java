@@ -6,14 +6,14 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.TextView;
 
-import com.dietz.chris.recyclerviewlibrary.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.RecyclerAdapter;
+import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 import com.dietz.chris.recyclerviewlibrary.ViewHolder;
 
 /**
  *
  */
-public class MainAdapter extends RecyclerAdapter {
+public class MainAdapter extends RecyclerAdapter<GroupItem, LabelItem> {
 
     public static int TYPE_ITEM = 1;
     public static int TYPE_GROUP = 2;
@@ -29,7 +29,7 @@ public class MainAdapter extends RecyclerAdapter {
     private MainAdapterListener mMainAdapterListener;
 
     @Override
-    public ViewHolder<? extends AdapterItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
+    public ViewHolder<? extends RecyclerItem> onCreateViewHolder(LayoutInflater inflater, ViewGroup parent, int viewType) {
         if (viewType == TYPE_ITEM) {
             return new InternalViewHolder(inflater, parent, R.layout.labelitem);
         } else if (viewType == TYPE_GROUP) {

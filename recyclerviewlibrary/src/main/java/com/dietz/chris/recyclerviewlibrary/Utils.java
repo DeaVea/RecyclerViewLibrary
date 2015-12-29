@@ -91,4 +91,19 @@ class Utils {
                 obj1.getClass().equals(obj2.getClass()) &&
                 ((obj1 == obj2 || (obj1.hashCode() == obj2.hashCode() && obj1.equals(obj2))));
     }
+
+    /**
+     * Determines if too objects are the same
+     * @param obj1
+     *      first item to check
+     * @param obj2
+     *      Second item to check
+     * @return
+     *      True if the items are the same.
+     */
+    public static boolean itemsEqual(RecyclerItem obj1, RecyclerItem obj2) {
+        return (obj1 == null && obj2 == null) ||
+                (obj1 != null && obj2 != null && obj1.getIdentityKey().equals(obj2.getIdentityKey()));
+
+    }
 }

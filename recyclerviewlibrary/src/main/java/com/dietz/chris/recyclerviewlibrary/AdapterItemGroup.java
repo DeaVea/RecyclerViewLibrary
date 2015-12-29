@@ -3,12 +3,8 @@ package com.dietz.chris.recyclerviewlibrary;
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
  */
-public abstract class AdapterItemGroup<K> extends AdapterItem<K> {
+class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     private final AdapterItemCollection mItems;
-
-    public AdapterItemGroup() {
-        this(null);
-    }
 
     public AdapterItemGroup(K payload) {
         super(payload);
@@ -16,12 +12,12 @@ public abstract class AdapterItemGroup<K> extends AdapterItem<K> {
     }
 
     @Override
-    public final boolean hasPayload(Object payload) {
+    public final <H extends RecyclerItem> boolean hasPayload(H payload) {
         return super.hasPayload(payload) || mItems.containsPayload(payload);
     }
 
     @Override
-    public final int removeItemWithPayload(Object payload){
+    public final <H extends RecyclerItem> int removeItemWithPayload(H payload){
         return mItems.removeItemWithPayload(payload);
     }
 

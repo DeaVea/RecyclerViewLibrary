@@ -23,7 +23,7 @@ public class OrderTestItem extends TestItem {
     }
 
     @Override
-    public int compareTo(@NonNull AdapterItem item) {
+    public int compareTo(@NonNull RecyclerItem item) {
         return order - ((OrderTestItem) item).order;
     }
 }

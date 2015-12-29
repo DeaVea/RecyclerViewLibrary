@@ -5,7 +5,7 @@ import android.support.annotation.NonNull;
 /**
  *
  */
-public class TestItem<K> extends AdapterItem<K> {
+public class TestItem implements RecyclerItem {
 
     private final String key;
 
@@ -14,15 +14,10 @@ public class TestItem<K> extends AdapterItem<K> {
         this.key = key;
     }
 
-    public TestItem(K payload) {
-        super(payload);
-        key = null;
-    }
-
     @NonNull
     @Override
     public String getIdentityKey() {
-        return (key != null) ? key : super.getIdentityKey();
+        return key;
     }
 
     @Override
@@ -31,7 +26,7 @@ public class TestItem<K> extends AdapterItem<K> {
     }
 
     @Override
-    public int compareTo(@NonNull AdapterItem another) {
-        return getIdentityKey().compareToIgnoreCase(another.getIdentityKey());
+    public int compareTo(@NonNull RecyclerItem another) {
+        return key.compareTo(another.getIdentityKey());
     }
 }

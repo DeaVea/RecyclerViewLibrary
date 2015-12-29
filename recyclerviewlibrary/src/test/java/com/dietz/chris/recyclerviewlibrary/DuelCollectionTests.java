@@ -17,25 +17,25 @@ public class DuelCollectionTests {
 
         assertThat(items.size(), equalTo(0));
 
-        int position = items.addOrUpdate(new TestItem("C"));
+        int position = items.addOrUpdate(new AdapterItem<>(new TestItem("C")));
         assertThat(position, equalTo(0));
         assertThat(items.size(), equalTo(1));
         assertThat(listListener.itemsPosInserted.size(), equalTo(1));
         assertThat(listListener.lastItemPositionInserted(), equalTo(0));
 
-        position = items.addOrUpdate(new TestItem("A"));
+        position = items.addOrUpdate(new AdapterItem<>(new TestItem("A")));
         assertThat(position, equalTo(0));
         assertThat(items.size(), equalTo(2));
         assertThat(listListener.itemsPosInserted.size(), equalTo(2));
         assertThat(listListener.lastItemPositionInserted(), equalTo(0));
 
-        position = items.addOrUpdate(new TestItem("B"));
+        position = items.addOrUpdate(new AdapterItem<>(new TestItem("B")));
         assertThat(position, equalTo(1));
         assertThat(items.size(), equalTo(3));
         assertThat(listListener.itemsPosInserted.size(), equalTo(3));
         assertThat(listListener.lastItemPositionInserted(), equalTo(1));
 
-        position = items.addOrUpdate(new TestItem("D"));
+        position = items.addOrUpdate(new AdapterItem<>(new TestItem("D")));
         assertThat(position, equalTo(3));
         assertThat(items.size(), equalTo(4));
         assertThat(listListener.itemsPosInserted.size(), equalTo(4));
@@ -47,59 +47,59 @@ public class DuelCollectionTests {
         TestAdapterListListener listListener = new TestAdapterListListener();
         final AdapterItemCollection items = new AdapterItemCollection(listListener);
 
-        items.addOrUpdate(new OrderTestItem("A", 0));
-        items.addOrUpdate(new OrderTestItem("B", 1));
-        items.addOrUpdate(new OrderTestItem("C", 2));
-        items.addOrUpdate(new OrderTestItem("D", 3));
-        items.addOrUpdate(new OrderTestItem("E", 4));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
 
         assertThat(items.size(), equalTo(5));
 
-        int position = items.addOrUpdate(new OrderTestItem("A", 0));
+        int position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
         assertThat(position, equalTo(0));
         assertThat(listListener.itemsPosChanged.size(), equalTo(1));
         assertThat(listListener.lastItemPositionChanged(), equalTo(0));
 
-        position = items.addOrUpdate(new OrderTestItem("B", 1));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
         assertThat(position, equalTo(1));
         assertThat(listListener.itemsPosChanged.size(), equalTo(2));
         assertThat(listListener.lastItemPositionChanged(), equalTo(1));
 
-        position = items.addOrUpdate(new OrderTestItem("C", 2));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
         assertThat(position, equalTo(2));
         assertThat(listListener.itemsPosChanged.size(), equalTo(3));
         assertThat(listListener.lastItemPositionChanged(), equalTo(2));
 
-        position = items.addOrUpdate(new OrderTestItem("D", 3));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
         assertThat(position, equalTo(3));
         assertThat(listListener.itemsPosChanged.size(), equalTo(4));
         assertThat(listListener.lastItemPositionChanged(), equalTo(3));
 
-        position = items.addOrUpdate(new OrderTestItem("E", 4));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
         assertThat(position, equalTo(4));
         assertThat(listListener.itemsPosChanged.size(), equalTo(5));
         assertThat(listListener.lastItemPositionChanged(), equalTo(4));
 
         assertThat(items.size(), equalTo(5));
 
-        position = items.addOrUpdate(new OrderTestItem("A", 1));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 1)));
         assertThat(position, equalTo(0));
         assertThat(listListener.itemsMoved.size(), equalTo(0));
         assertThat(listListener.lastItemPositionChanged(), equalTo(0));
 
-        position = items.addOrUpdate(new OrderTestItem("B", 0));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 0)));
         assertThat(position, equalTo(0));
         assertThat(listListener.itemsMoved.size(), equalTo(1));
         assertThat(listListener.lastItemMoved().fromPosition, equalTo(1));
         assertThat(listListener.lastItemMoved().toPosition, equalTo(0));
 
-        position = items.addOrUpdate(new OrderTestItem("C", 10));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 10)));
         assertThat(position, equalTo(4));
         assertThat(listListener.itemsMoved.size(), equalTo(2));
         assertThat(listListener.lastItemMoved().fromPosition, equalTo(2));
         assertThat(listListener.lastItemMoved().toPosition, equalTo(4));
 
-        position = items.addOrUpdate(new OrderTestItem("A", 7));
+        position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 7)));
         assertThat(position, equalTo(3));
         assertThat(listListener.itemsMoved.size(), equalTo(3));
         assertThat(listListener.lastItemMoved().fromPosition, equalTo(1));
@@ -111,11 +111,11 @@ public class DuelCollectionTests {
         TestAdapterListListener listListener = new TestAdapterListListener();
         final AdapterItemCollection items = new AdapterItemCollection(listListener);
 
-        items.addOrUpdate(new OrderTestItem("A", 0));
-        items.addOrUpdate(new OrderTestItem("B", 1));
-        items.addOrUpdate(new OrderTestItem("C", 2));
-        items.addOrUpdate(new OrderTestItem("D", 3));
-        items.addOrUpdate(new OrderTestItem("E", 4));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
 
         assertThat(items.get(0).getIdentityKey(), equalTo("A"));
         assertThat(items.get(1).getIdentityKey(), equalTo("B"));
@@ -129,11 +129,11 @@ public class DuelCollectionTests {
         TestAdapterListListener listListener = new TestAdapterListListener();
         final AdapterItemCollection items = new AdapterItemCollection(listListener);
 
-        items.addOrUpdate(new OrderTestItem("A", 0));
-        items.addOrUpdate(new OrderTestItem("B", 1));
-        items.addOrUpdate(new OrderTestItem("C", 2));
-        items.addOrUpdate(new OrderTestItem("D", 3));
-        items.addOrUpdate(new OrderTestItem("E", 4));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
 
         assertThat(items.size(), equalTo(5));
 
@@ -150,17 +150,17 @@ public class DuelCollectionTests {
     public void containsPayloadTests() {
         final AdapterItemCollection items = new AdapterItemCollection(null);
 
-        TestPayload payload1 = new TestPayload("A");
-        TestPayload payload2 = new TestPayload("B");
-        TestPayload payload3 = new TestPayload("C");
-        TestPayload payload4 = new TestPayload("D");
-        TestPayload payload5 = new TestPayload("A");
+        TestItem payload1 = new TestItem("A");
+        TestItem payload2 = new TestItem("B");
+        TestItem payload3 = new TestItem("C");
+        TestItem payload4 = new TestItem("D");
+        TestItem payload5 = new TestItem("A");
 
-        items.addOrUpdate(new TestItem<TestPayload>(payload1));
-        items.addOrUpdate(new TestItem<TestPayload>(payload2));
-        items.addOrUpdate(new TestItem<TestPayload>(payload3));
-        items.addOrUpdate(new TestItem<TestPayload>(payload4));
-        items.addOrUpdate(new TestItem<TestPayload>(payload5));
+        items.addOrUpdate(new AdapterItem<>(payload1));
+        items.addOrUpdate(new AdapterItem<>(payload2));
+        items.addOrUpdate(new AdapterItem<>(payload3));
+        items.addOrUpdate(new AdapterItem<>(payload4));
+        items.addOrUpdate(new AdapterItem<>(payload5));
 
         assertThat(items.containsPayload(payload1), equalTo(true));
         assertThat(items.containsPayload(payload2), equalTo(true));
@@ -173,17 +173,17 @@ public class DuelCollectionTests {
     public void removePayloadTests() {
         final AdapterItemCollection items = new AdapterItemCollection(null);
 
-        TestPayload payload1 = new TestPayload("A");
-        TestPayload payload2 = new TestPayload("B");
-        TestPayload payload3 = new TestPayload("C");
-        TestPayload payload4 = new TestPayload("D");
-        TestPayload payload5 = new TestPayload("A");
+        TestItem payload1 = new TestItem("A");
+        TestItem payload2 = new TestItem("B");
+        TestItem payload3 = new TestItem("C");
+        TestItem payload4 = new TestItem("D");
+        TestItem payload5 = new TestItem("A");
 
-        items.addOrUpdate(new TestItem<TestPayload>(payload1));
-        items.addOrUpdate(new TestItem<TestPayload>(payload2));
-        items.addOrUpdate(new TestItem<TestPayload>(payload3));
-        items.addOrUpdate(new TestItem<TestPayload>(payload4));
-        items.addOrUpdate(new TestItem<TestPayload>(payload5));
+        items.addOrUpdate(new AdapterItem<>(payload1));
+        items.addOrUpdate(new AdapterItem<>(payload2));
+        items.addOrUpdate(new AdapterItem<>(payload3));
+        items.addOrUpdate(new AdapterItem<>(payload4));
+        items.addOrUpdate(new AdapterItem<>(payload5));
 
         assertThat(items.removeItemWithPayload(payload1), equalTo(1));
         assertThat(items.removeItemWithPayload(payload3), equalTo(1));
@@ -194,22 +194,22 @@ public class DuelCollectionTests {
 
         items.clear();
 
-        TestPayload groupPayload1 = new TestPayload("Group1");
-        TestGroupItem<TestPayload> group1 = new TestGroupItem<TestPayload>(groupPayload1);
-        group1.addOrUpdateItem(new TestItem<TestPayload>(payload1));
-        group1.addOrUpdateItem(new TestItem<TestPayload>(payload2));
+        TestItem groupPayload1 = new TestItem("Group1");
+        AdapterItemGroup group1 = new AdapterItemGroup<>(groupPayload1);
+        group1.addOrUpdateItem(new AdapterItem<>(payload1));
+        group1.addOrUpdateItem(new AdapterItem<>(payload2));
 
-        TestPayload groupPayload2 = new TestPayload("Group2");
-        TestGroupItem<TestPayload> group2 = new TestGroupItem<TestPayload>(groupPayload2);
-        group2.addOrUpdateItem(new TestItem<TestPayload>(payload3));
-        group2.addOrUpdateItem(new TestItem<TestPayload>(payload4));
+        TestItem groupPayload2 = new TestItem("Group2");
+        AdapterItemGroup group2 = new AdapterItemGroup<>(groupPayload2);
+        group2.addOrUpdateItem(new AdapterItem<>(payload3));
+        group2.addOrUpdateItem(new AdapterItem<>(payload4));
 
-        TestPayload groupPayload3 = new TestPayload("Group3");
-        TestGroupItem<TestPayload> group3 = new TestGroupItem<TestPayload>(groupPayload3);
-        group3.addOrUpdateItem(new TestItem<TestPayload>(payload1));
-        group3.addOrUpdateItem(new TestItem<TestPayload>(payload2));
-        group3.addOrUpdateItem(new TestItem<TestPayload>(payload3));
-        group3.addOrUpdateItem(new TestItem<TestPayload>(payload4));
+        TestItem groupPayload3 = new TestItem("Group3");
+        AdapterItemGroup group3 = new AdapterItemGroup<>(groupPayload3);
+        group3.addOrUpdateItem(new AdapterItem<>(payload1));
+        group3.addOrUpdateItem(new AdapterItem<>(payload2));
+        group3.addOrUpdateItem(new AdapterItem<>(payload3));
+        group3.addOrUpdateItem(new AdapterItem<>(payload4));
 
         items.addOrUpdate(group1);
         items.addOrUpdate(group2);

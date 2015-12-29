@@ -40,12 +40,12 @@ public class MainActivity extends AppCompatActivity implements MainAdapter.MainA
 
     @Override
     public void onAddItemToGroup(GroupItem group) {
-        group.addOrUpdateItem(new LabelItem(TYPE_LABEL));
+        adapter.addItemToGroup(group, new LabelItem(TYPE_LABEL));
     }
 
     @Override
     public void onAddGroupToGroup(GroupItem group) {
-        group.addOrUpdateItem(new GroupItem(TYPE_GROUP));
+        adapter.addItemToGroup(group, new GroupItem(TYPE_GROUP));
     }
 
     @Override

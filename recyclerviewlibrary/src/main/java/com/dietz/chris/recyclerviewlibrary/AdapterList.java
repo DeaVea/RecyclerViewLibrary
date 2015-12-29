@@ -19,29 +19,35 @@ class AdapterList {
         mListListener.setInternalListener(listListener);
     }
 
-    public void add(AdapterItem item) {
-        mMainList.addOrUpdate(item);
+    public <K extends RecyclerItem> void addItem(K item) {
+        mMainList.addOrUpdate(new AdapterItem<>(item));
     }
 
-    public int removePayload(Object payload) {
+    public <K extends RecyclerGroupItem> void addItem(K item) {
+        mMainList.addOrUpdate(new AdapterItemGroup<>(item));
+    }
+
+    public <K extends RecyclerItem> void addItemToGroup(K item, RecyclerGroupItem toGroup) {
+        final AdapterItem group = mMainList.findItemWithPayload(toGroup);
+        if (group != null) {
+            group.addOrUpdateItem(new AdapterItem<>(item));
+        }
+    }
+
+    public <K extends RecyclerItem> int removeItem(K payload) {
         return mMainList.removeItemWithPayload(payload);
-    }
-
-    public void remove(AdapterItem item) {
-        mMainList.remove(item);
     }
 
     public int size() {
         return mMainList.size();
     }
 
-    public <K extends AdapterItem> K get(int position) {
-        return mMainList.get(position);
+    public RecyclerItem get(int position) {
+        return mMainList.get(position).getPayload();
     }
 
     public int getType(int position) {
-        AdapterItem item = mMainList.get(position);
-        return item.getType();
+        return mMainList.get(position).getType();
     }
 
     public void clear() {
