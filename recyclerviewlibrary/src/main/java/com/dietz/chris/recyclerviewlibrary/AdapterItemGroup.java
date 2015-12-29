@@ -12,6 +12,15 @@ class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     }
 
     @Override
+    public final <H extends RecyclerItem> AdapterItem getItemWithPayload(H payload) {
+        if (Utils.itemsEqual(getPayload(), payload)) {
+            return this;
+        } else {
+            return mItems.findItemWithPayload(payload);
+        }
+    }
+
+    @Override
     public final <H extends RecyclerItem> boolean hasPayload(H payload) {
         return super.hasPayload(payload) || mItems.containsPayload(payload);
     }

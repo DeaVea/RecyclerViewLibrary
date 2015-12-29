@@ -34,6 +34,13 @@ class AdapterList {
         }
     }
 
+    public <K extends RecyclerGroupItem> void addItemToGroup(K item, RecyclerGroupItem toGroup) {
+        final AdapterItem group = mMainList.findItemWithPayload(toGroup);
+        if (group != null) {
+            group.addOrUpdateItem(new AdapterItemGroup<>(item));
+        }
+    }
+
     public <K extends RecyclerItem> int removeItem(K payload) {
         return mMainList.removeItemWithPayload(payload);
     }
