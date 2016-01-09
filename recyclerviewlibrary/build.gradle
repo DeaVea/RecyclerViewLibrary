@@ -1,4 +1,12 @@
 apply plugin: 'com.android.library'
+apply plugin: 'maven'
+
+group = 'com.dietz.chris.recyclerviewlibrary'
+version = '1.0.0'
+
+repositories {
+    mavenLocal()
+}
 
 android {
     compileSdkVersion 23
@@ -16,15 +24,32 @@ android {
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
         }
     }
+
+    task installArchives(type: Upload) {
+        repositories.mavenInstaller {
+            configuration = configurations.default
+            pom.groupId = 'com.dietz.chris.recyclerviewlibrary'
+            pom.artifactId = 'recyclerviewlibrary-beta'
+            pom.version = '1.0.0'
+        }
+    }
+
+    uploadArchives {
+        repositories {
+            mavenDeployer {
+                repository(url: "file://C:\\Users\\Chris\\.m2\\repository\\")
+            }
+        }
+    }
 }
 
 dependencies {
     compile fileTree(dir: 'libs', include: ['*.jar'])
-    testCompile 'junit:junit:4.12'
     compile 'com.android.support:appcompat-v7:23.1.1'
     compile 'com.android.support:recyclerview-v7:23.1.1'
     compile 'com.android.support:support-annotations:23.1.1'
     compile 'org.hamcrest:hamcrest-core:1.3'
+    testCompile 'junit:junit:4.12'
     androidTestCompile 'junit:junit:4.12'
     compile 'com.android.support:design:23.1.1'
 }

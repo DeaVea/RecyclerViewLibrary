@@ -1,7 +1,8 @@
 package com.dietz.chris.recyclerviewlibrary;
 
+import android.support.annotation.NonNull;
+import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
-import android.view.LayoutInflater;
 import android.view.ViewGroup;
 
 import com.dietz.chris.recyclerviewlibrary.core.AdapterList;
@@ -10,9 +11,7 @@ import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
 /**
  *
  */
-public class RecyclerAdapter<G extends RecyclerGroupItem, K extends RecyclerItem> extends RecyclerView.Adapter<ViewHolder<? extends RecyclerItem>> {
-
-    private static LayoutInflater mInflater;
+public class RecyclerAdapter<K extends RecyclerItem> extends RecyclerView.Adapter<ViewHolder<? extends RecyclerItem>> {
 
     private final AdapterList mList;
     private ViewHolderFactory mHolderFactory;
@@ -22,34 +21,62 @@ public class RecyclerAdapter<G extends RecyclerGroupItem, K extends RecyclerItem
         mList.setListListener(new AdapterListListener(this));
     }
 
-    public void setViewHolderFactory(ViewHolderFactory factory) {
+    /**
+     * Testing constructor.  If there is no recyclerview attached to this adapter, then it will crash
+     * when items are added (RecyclerView#notify_________ methods will crash).  This allows a custom
+     * list adapter listener that's not the default one.
+     * @param listListener
+     *      Listlistner to use.
+     */
+    RecyclerAdapter(AdapterListListener listListener) {
+        mList = new AdapterList();
+        mList.setListListener(listListener);
+    }
+
+    /**
+     * Returns the underlying List so inheriting classes can perform custom actions.  Do not make this public
+     * Internal uses only.
+     * @return
+     *      The list that backs this adapter.
+     */
+    AdapterList getList() {
+        return mList;
+    }
+
+    /**
+     * Sets a holder factory to create the {@link ViewHolder} that backs this adapter.
+     *
+     * This is required to be set before using the adapter.
+     * @param factory
+     *      Viewholder factory that must be set before coming to view.
+     *
+     */
+    public void setViewHolderFactory(@NonNull ViewHolderFactory factory) {
         mHolderFactory = factory;
     }
 
-    public void addItem(K item) {
-        mList.addItem(item);
+    /**
+     * Add a an item to the adapter.
+     */
+    public void addItem(@Nullable K item) {
+        if (item != null) {
+            mList.addItem(item);
+        }
     }
 
-    public void addItem(G item) {
-        mList.addItem(item);
+    /**
+     * Removes an item found in the list.  This will check the underlying key for the item, so they
+     * may not be perfectly equal.
+     */
+    public void removeItem(@Nullable K item) {
+        if (item != null) {
+            mList.removeItem(item);
+        }
     }
 
-    public void removeItem(G item) {
-        mList.removeItem(item);
-    }
-
-    public void removeItem(K item) {
-        mList.removeItem(item);
-    }
-
-    public void addItemToGroup(G group, K item) {
-        mList.addItemToGroup(item, group);
-    }
-
-    public void addItemToGroup(G group, G otherGroup) {
-        mList.addItemToGroup(otherGroup, group);
-    }
-
+    /**
+     * Clears the entire list.
+     */
     public void clear() {
         mList.clear();
     }
@@ -69,12 +96,12 @@ public class RecyclerAdapter<G extends RecyclerGroupItem, K extends RecyclerItem
     }
 
     @Override
-    public int getItemViewType(int position) {
+    public final int getItemViewType(int position) {
         return mList.getType(position);
     }
 
     @Override
-    public int getItemCount() {
+    public final int getItemCount() {
         return mList.size();
     }
 }

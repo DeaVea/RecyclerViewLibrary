@@ -1,5 +1,6 @@
 package com.dietz.chris.recyclerviewlibrary;
 
+import android.content.Context;
 import android.support.annotation.IdRes;
 import android.support.annotation.LayoutRes;
 import android.support.v7.widget.RecyclerView;
@@ -26,6 +27,41 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
         mClickListener = new InternalClickListener<>();
         mMainClickListener = null;
         mBoundItem = null;
+    }
+
+    /**
+     *
+     * @param ctx
+     *      Application context
+     * @param id
+     *      Layout ID of the layout to inflate
+     */
+    public ViewHolder(Context ctx, @LayoutRes int id) {
+        this(LayoutInflater.from(ctx), id);
+    }
+
+    /**
+     *
+     * @param ctx
+     *      Application context
+     * @param parent
+     *      Parent that the adapter is attached to (generally the RecyclerView)
+     * @param id
+     *      Layout ID of the layout to inflate
+     */
+    public ViewHolder(Context ctx, ViewGroup parent, @LayoutRes int id) {
+        this(LayoutInflater.from(ctx), parent, id);
+    }
+
+    /**
+     *
+     * @param inflater
+     *      LayoutInflater to inflate views
+     * @param id
+     *      Layout ID of the layout to inflate.
+     */
+    public ViewHolder(LayoutInflater inflater, @LayoutRes int id) {
+        this(inflater.inflate(id, null));
     }
 
     /**
