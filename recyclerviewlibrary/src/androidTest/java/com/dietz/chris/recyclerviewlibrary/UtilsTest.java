@@ -2,6 +2,9 @@ package com.dietz.chris.recyclerviewlibrary;
 
 import android.support.annotation.NonNull;
 
+import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
+import com.dietz.chris.recyclerviewlibrary.core.Utils;
+
 import org.junit.Test;
 
 import java.util.ArrayList;
