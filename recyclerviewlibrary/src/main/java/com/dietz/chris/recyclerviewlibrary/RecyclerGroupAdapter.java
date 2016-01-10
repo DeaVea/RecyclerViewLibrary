@@ -7,7 +7,7 @@ import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
 /**
  * A {@link RecyclerAdapter} that supports grouping.
  */
-public class RecyclerGroupAdapter<G extends RecyclerGroupItem, K extends RecyclerItem> extends RecyclerAdapter {
+public class RecyclerGroupAdapter<G extends RecyclerGroupItem, K extends RecyclerItem> extends RecyclerAdapter<K> {
 
     public RecyclerGroupAdapter() {
         super();
@@ -25,7 +25,7 @@ public class RecyclerGroupAdapter<G extends RecyclerGroupItem, K extends Recycle
 
     public void removeItem(@Nullable G item) {
         if (item != null) {
-            getList().addItem(item);
+            getList().removeItem(item);
         }
     }
 

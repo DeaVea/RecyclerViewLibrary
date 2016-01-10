@@ -27,5 +27,28 @@ public class RecylerGroupAdapterTests {
 
         assertThat(adapter.getItemViewType(0), is(equalTo(1)));
         assertThat(adapter.getItemViewType(1), is(equalTo(2)));
+
+        adapter.addItemToGroup(new TestGroupItem("Group1"), new TestGroupItem("Group2"));
+        assertThat(adapter.getItemCount(), is(equalTo(3)));
+    }
+
+    @Test
+    public void removeFromGroupTest() {
+        final RecyclerGroupAdapter<TestGroupItem, TestItem> adapter = new RecyclerGroupAdapter<>(null);
+
+        adapter.addItem(new TestGroupItem("Group1").setType(1));
+        adapter.addItemToGroup(new TestGroupItem("Group1"), new TestItem("TestItem1"));
+        adapter.addItemToGroup(new TestGroupItem("Group1"), new TestItem("TestItem2"));
+        adapter.addItemToGroup(new TestGroupItem("Group1"), new TestItem("TestItem3"));
+        adapter.addItemToGroup(new TestGroupItem("Group1"), new TestItem("TestItem4"));
+        assertThat(adapter.getItemCount(), is(equalTo(5)));
+
+        adapter.removeItem(new TestItem("TestItem1"));
+        assertThat(adapter.getItemCount(), is(equalTo(4)));
+        adapter.removeItem(new TestItem("TestItem1"));
+        assertThat(adapter.getItemCount(), is(equalTo(4)));
+
+        adapter.removeItem(new TestGroupItem("Group1"));
+        assertThat(adapter.getItemCount(), is(equalTo(0)));
     }
 }
