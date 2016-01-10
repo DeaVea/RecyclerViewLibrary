@@ -5,6 +5,9 @@ import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -166,5 +169,30 @@ public class RecyclerAdapterTests {
 
         TestItem subItem = adapter.findItem("SubObj1");
         assertThat(subItem, is(notNullValue()));
+    }
+
+    @Test
+    public void addItemsTests() {
+        final RecyclerAdapter adapter = new RecyclerAdapter(null);
+        List<TestItem> items = new ArrayList<>();
+        items.add(new TestItem("Obj1"));
+        items.add(new TestItem("Obj2"));
+        items.add(new TestItem("Obj3"));
+        items.add(new TestItem("Obj4"));
+        items.add(new TestItem("Obj5"));
+
+        adapter.addItems(items);
+
+        assertThat(adapter.getItemCount(), is(equalTo(5)));
+
+        items.add(new TestItem("Obj6"));
+        items.add(new TestItem("Obj7"));
+        items.add(new TestItem("Obj8"));
+        items.add(new TestItem("Obj9"));
+        items.add(new TestItem("Obj10"));
+
+        adapter.addItems(items);
+        // The previous items would just be replaced.
+        assertThat(adapter.getItemCount(), is(equalTo(10)));
     }
 }

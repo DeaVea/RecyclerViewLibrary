@@ -8,6 +8,8 @@ import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterList;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
 
+import java.util.Collection;
+
 /**
  *
  */
@@ -64,6 +66,20 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
     public void addItem(@Nullable RecyclerItem item) {
         if (item != null) {
             mList.addItem(item);
+        }
+    }
+
+    /**
+     * Adds and sorts the collection of items in to the adapter.
+     * @param items
+     *      Items to add.
+     */
+    public void addItems(@Nullable Collection<? extends RecyclerItem> items) {
+        if (items != null && !items.isEmpty()) {
+            // TODO: Issue is they may not be in the proper order, so need to insert them individually to sort.  Need a better way.
+            for (RecyclerItem item : items) {
+                addItem(item);
+            }
         }
     }
 
