@@ -62,6 +62,25 @@ class AdapterItemCollection {
     }
 
     /**
+     * Finds the first item with the given key or null if it is not found.
+     * @param key
+     *      Key to search for.
+     * @return
+     *      AdapterItem found with the given key or null if it is not in the list.
+     */
+    public AdapterItem findItemWithKey(String key) {
+        AdapterItem returnItem = mMap.get(key);
+        if (returnItem == null) {
+            for (AdapterItem item : mList) {
+                if ((returnItem = item.getItemWithIdentityKey(key)) != null) {
+                    return returnItem;
+                }
+            }
+        }
+        return returnItem;
+    }
+
+    /**
      * Finds all the items that are in this list that contains the payload and removes it.
      * @param payload
      *      payload item to look for.

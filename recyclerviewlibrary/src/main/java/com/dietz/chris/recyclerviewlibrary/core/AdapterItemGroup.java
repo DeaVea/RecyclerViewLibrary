@@ -5,7 +5,7 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
  */
-class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
+public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     private final AdapterItemCollection mItems;
 
     public AdapterItemGroup(K payload) {
@@ -15,11 +15,13 @@ class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
 
     @Override
     public final <H extends RecyclerItem> AdapterItem getItemWithPayload(H payload) {
-        if (Utils.itemsEqual(getPayload(), payload)) {
-            return this;
-        } else {
-            return mItems.findItemWithPayload(payload);
-        }
+        return Utils.itemsEqual(getPayload(), payload) ? this : mItems.findItemWithPayload(payload);
+    }
+
+    @Override
+    public final AdapterItem getItemWithIdentityKey(String identityKey) {
+        AdapterItem returnItem = super.getItemWithIdentityKey(identityKey);
+        return returnItem == null ? mItems.findItemWithKey(identityKey) : null;
     }
 
     @Override

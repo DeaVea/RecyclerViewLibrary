@@ -1,17 +1,17 @@
 package com.dietz.chris.recyclerviewlibrary;
 
-import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 import android.support.v7.widget.RecyclerView;
 import android.view.ViewGroup;
 
+import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterList;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
 
 /**
  *
  */
-public class RecyclerAdapter<K extends RecyclerItem> extends RecyclerView.Adapter<ViewHolder<? extends RecyclerItem>> {
+public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends RecyclerItem>> {
 
     private final AdapterList mList;
     private ViewHolderFactory mHolderFactory;
@@ -51,14 +51,17 @@ public class RecyclerAdapter<K extends RecyclerItem> extends RecyclerView.Adapte
      *      Viewholder factory that must be set before coming to view.
      *
      */
-    public void setViewHolderFactory(@NonNull ViewHolderFactory factory) {
+    public void setViewHolderFactory(@Nullable ViewHolderFactory factory) {
+        if (factory == null) {
+            throw new IllegalArgumentException("ViewHolderFactory can not be null.");
+        }
         mHolderFactory = factory;
     }
 
     /**
      * Add a an item to the adapter.
      */
-    public void addItem(@Nullable K item) {
+    public void addItem(@Nullable RecyclerItem item) {
         if (item != null) {
             mList.addItem(item);
         }
@@ -68,10 +71,34 @@ public class RecyclerAdapter<K extends RecyclerItem> extends RecyclerView.Adapte
      * Removes an item found in the list.  This will check the underlying key for the item, so they
      * may not be perfectly equal.
      */
-    public void removeItem(@Nullable K item) {
+    public void removeItem(@Nullable RecyclerItem item) {
         if (item != null) {
             mList.removeItem(item);
         }
+    }
+
+    /**
+     * Returns the first item found with the given identity key or null if the item was not found.
+     * @param identityKey
+     *      Identity key of the item found.
+     * @return
+     *      Payload at the given ID or null if it was not found.
+     */
+    public <T extends RecyclerItem> T findItem(String identityKey) {
+        return mList.findPayloadWithId(identityKey);
+    }
+
+    /**
+     * Returns the first adapter item found with the given identity key.  This will throw a
+     * "ClassCastException" if the payload with the identity key is different then what was expected.
+     * @param identityKey
+     *      Identity key of the item found.
+     * @return
+     *      Adapter item which is backing this adapter.
+     */
+    public <K extends RecyclerItem> AdapterItem<K> findAdapterItem(String identityKey) {
+        //noinspection unchecked  It's supposed to throw a ClassCastException which means the caller screwed up.
+        return mList.findItemWithId(identityKey);
     }
 
     /**

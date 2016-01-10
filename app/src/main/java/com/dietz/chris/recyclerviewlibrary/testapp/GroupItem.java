@@ -2,13 +2,12 @@ package com.dietz.chris.recyclerviewlibrary.testapp;
 
 import android.support.annotation.NonNull;
 
-import com.dietz.chris.recyclerviewlibrary.RecyclerGroupItem;
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 /**
  *
  */
-public class GroupItem implements RecyclerGroupItem {
+public class GroupItem implements RecyclerItem {
 
     static int count = 0;
 

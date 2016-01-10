@@ -8,7 +8,7 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 /**
  *
  */
-class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
+public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
 
     private K mPayload;
 
@@ -31,8 +31,20 @@ class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
     }
 
     /**
+     * This adds a payload to the Adapter Item.  This is different than {@link #setPayload} in that
+     * rather this item is left untouched.  Instead, a new AdapterItem will be added to the collection.
+     *
+     * @param payload
+     *      Payload to add.
+     */
+    public boolean addOrUpdatePayload(K payload) {
+        return addOrUpdateItem(new AdapterItemGroup<>(payload));
+    }
+
+    /**
      * Sets the payload that is backed by this adapter item.
      * @param payload
+     *      Item that is going to represent this adapter item
      */
     public void setPayload(K payload) {
         if (payload == null) {
@@ -58,8 +70,20 @@ class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
     }
 
     /**
+     * Returns the item that shares the identity key or null if the item was not found.
+     * @param item
+     *      Item key to search for.
+     * @return
+     *      Null if the item was not found.
+     */
+    AdapterItem getItemWithIdentityKey(String item) {
+        return getIdentityKey().equals(item) ? this : null;
+    }
+
+    /**
      * Returns the paylaod set by this adapter item.
      * @return
+     *      Item that is backing this adapter item
      */
     public K getPayload() {
         return mPayload;

@@ -13,12 +13,13 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerAdapter;
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 import com.dietz.chris.recyclerviewlibrary.ViewHolder;
 import com.dietz.chris.recyclerviewlibrary.ViewHolderFactory;
+import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 
 public class MainActivity extends AppCompatActivity implements View.OnClickListener {
 
     private static final int TYPE_LABEL = 1;
     private static final int TYPE_GROUP = 2;
-    private RecyclerAdapter<GroupItem, LabelItem> adapter;
+    private RecyclerAdapter adapter;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -28,7 +29,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         final RecyclerView recyclerView = (RecyclerView) findViewById(R.id.list);
         recyclerView.setLayoutManager(new LinearLayoutManager(this, LinearLayoutManager.VERTICAL, false));
         recyclerView.setItemAnimator(new DefaultItemAnimator());
-        recyclerView.setAdapter(adapter = new RecyclerAdapter<>());
+        recyclerView.setAdapter(adapter = new RecyclerAdapter());
         adapter.setViewHolderFactory(new ViewHolderFactory() {
             @Override
             public ViewHolder<? extends RecyclerItem> createViewHolder(int type) {
@@ -79,13 +80,15 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
                 .addAction(R.id.btnAddGroup, new Action<GroupItem>() {
                     @Override
                     public void action(int actionId, GroupItem boundItem) {
-                        adapter.addItemToGroup(boundItem, new GroupItem(TYPE_GROUP));
+                        AdapterItem adapterItem = adapter.findAdapterItem(boundItem.getIdentityKey());
+                        adapterItem.addOrUpdatePayload(new GroupItem(TYPE_GROUP));
                     }
                 })
                 .addAction(R.id.btnAddItem, new Action<GroupItem>() {
                     @Override
                     public void action(int actionId, GroupItem boundItem) {
-                        adapter.addItemToGroup(boundItem, new LabelItem(TYPE_LABEL));
+                        AdapterItem adapterItem = adapter.findAdapterItem(boundItem.getIdentityKey());
+                        adapterItem.addOrUpdatePayload(new LabelItem(TYPE_LABEL));
                     }
                 });
     }

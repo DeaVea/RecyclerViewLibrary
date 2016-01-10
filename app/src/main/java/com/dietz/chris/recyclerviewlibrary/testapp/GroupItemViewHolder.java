@@ -20,6 +20,7 @@ public class GroupItemViewHolder extends ViewHolder<GroupItem> {
      * @param parent
      *         Parent of the view holder (generally the RecyclerView itself)
      * @param id
+     *      Layout ID to inflate
      */
     public GroupItemViewHolder(LayoutInflater inflater, ViewGroup parent, @LayoutRes int id) {
         super(inflater, parent, id);

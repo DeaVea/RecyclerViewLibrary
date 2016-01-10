@@ -8,7 +8,7 @@ import android.widget.TextView;
 import com.dietz.chris.recyclerviewlibrary.ViewHolder;
 
 /**
- * Created by Chris on 1/8/2016.
+ *
  */
 public class ItemViewHolder extends ViewHolder<LabelItem> {
     TextView mTv;
@@ -19,6 +19,7 @@ public class ItemViewHolder extends ViewHolder<LabelItem> {
      * @param parent
      *         Parent of the view holder (generally the RecyclerView itself)
      * @param id
+     *      Layout ID to inflate
      */
     public ItemViewHolder(LayoutInflater inflater, ViewGroup parent, @LayoutRes int id) {
         super(inflater, parent, id);

@@ -2,7 +2,6 @@ package com.dietz.chris.recyclerviewlibrary.core;
 
 import android.support.annotation.Nullable;
 
-import com.dietz.chris.recyclerviewlibrary.RecyclerGroupItem;
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 /**
@@ -23,25 +22,17 @@ public class AdapterList {
     }
 
     public <K extends RecyclerItem> void addItem(K item) {
-        mMainList.addOrUpdate(new AdapterItem<>(item));
-    }
-
-    public <K extends RecyclerGroupItem> void addItem(K item) {
         mMainList.addOrUpdate(new AdapterItemGroup<>(item));
     }
 
-    public <K extends RecyclerItem> void addItemToGroup(K item, RecyclerGroupItem toGroup) {
-        final AdapterItem group = mMainList.findItemWithPayload(toGroup);
-        if (group != null) {
-            group.addOrUpdateItem(new AdapterItem<>(item));
-        }
+    public <K extends RecyclerItem> K findPayloadWithId(String id) {
+        //noinspection unchecked  This is supposed to throw a ClassCastException if it isn't what's expected anyway.
+        final AdapterItem<K> group = mMainList.findItemWithKey(id);
+        return group == null ? null : group.getPayload();
     }
 
-    public <K extends RecyclerGroupItem> void addItemToGroup(K item, RecyclerGroupItem toGroup) {
-        final AdapterItem group = mMainList.findItemWithPayload(toGroup);
-        if (group != null) {
-            group.addOrUpdateItem(new AdapterItemGroup<>(item));
-        }
+    public AdapterItem findItemWithId(String id) {
+        return mMainList.findItemWithKey(id);
     }
 
     public <K extends RecyclerItem> int removeItem(K payload) {

@@ -26,7 +26,7 @@ public class TestAdapterItemListener implements AdapterListener {
     }
 
     @Override
-    public void itemsAdded(@NonNull AdapterItemGroup container, @NonNull int fromPosition, int size) {
+    public void itemsAdded(@NonNull AdapterItemGroup container, int fromPosition, int size) {
 
     }
 
@@ -36,7 +36,7 @@ public class TestAdapterItemListener implements AdapterListener {
     }
 
     @Override
-    public void itemsRemoved(@NonNull AdapterItemGroup container, @NonNull int fromPosition, @NonNull int size) {
+    public void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size) {
 
     }
 }

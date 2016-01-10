@@ -2,13 +2,12 @@ package com.dietz.chris.recyclerviewlibrary.mocks;
 
 import android.support.annotation.NonNull;
 
-import com.dietz.chris.recyclerviewlibrary.RecyclerGroupItem;
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 /**
  *
  */
-public class TestGroupItem implements RecyclerGroupItem {
+public class TestGroupItem implements RecyclerItem {
 
     private final String key;
     private int type = 0;
