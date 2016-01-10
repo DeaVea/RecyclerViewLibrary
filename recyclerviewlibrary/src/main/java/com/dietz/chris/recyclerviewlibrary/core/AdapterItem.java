@@ -37,7 +37,7 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
      * @param payload
      *      Payload to add.
      */
-    public boolean addOrUpdatePayload(K payload) {
+    public <T extends RecyclerItem> boolean addOrUpdatePayload(T payload) {
         return addOrUpdateItem(new AdapterItemGroup<>(payload));
     }
 
