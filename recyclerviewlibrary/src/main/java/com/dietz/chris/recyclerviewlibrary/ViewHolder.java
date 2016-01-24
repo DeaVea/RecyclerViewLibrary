@@ -74,7 +74,7 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
      *      Layout ID of the layout to inflate.
      */
     public ViewHolder(LayoutInflater inflater, @LayoutRes int id) {
-        this(inflater.inflate(id, null));
+        this(inflater, null, id);
     }
 
     /**
@@ -87,7 +87,7 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
      *      Layout ID of the layout to inflate.
      */
     public ViewHolder(LayoutInflater inflater, ViewGroup parent, @LayoutRes int id) {
-        this(inflater.inflate(id, parent, false));
+        this(inflater.inflate(id, ((parent == null) ? new VoidViewGroup(inflater.getContext()) : parent), false));
     }
 
     /**
@@ -221,6 +221,23 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
             if (action != null) {
                 action.action(v.getId(), mBoundItem);
             }
+        }
+    }
+
+    /**
+     * This is a ViewGroup used exclusively for inflating layouts with the LayoutInflater.
+     * If the user doesn't pass one in and opts for a null, then the inflated layout loses
+     * some attributes, so this is a default until something better comes along.
+     */
+    private static class VoidViewGroup extends ViewGroup {
+
+        public VoidViewGroup(Context context) {
+            super(context);
+        }
+
+        @Override
+        protected void onLayout(boolean changed, int l, int t, int r, int b) {
+
         }
     }
 }
