@@ -16,6 +16,8 @@ package com.dietz.chris.recyclerviewlibrary.core;
 
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
+import java.util.Collection;
+
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
  */
@@ -56,6 +58,14 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     @Override
     public final boolean addOrUpdateItem(AdapterItem item) {
         mItems.addOrUpdate(item);
+        return true;
+    }
+
+    @Override
+    public final boolean addOrUpdateItems(Collection<AdapterItem> items) {
+        for (AdapterItem item : items) {
+            addOrUpdateItem(item);
+        }
         return true;
     }
 

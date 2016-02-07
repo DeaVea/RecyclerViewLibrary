@@ -19,6 +19,8 @@ import android.support.annotation.Nullable;
 
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
+import java.util.Collection;
+
 /**
  *
  */
@@ -151,13 +153,26 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
     }
 
     /**
-     * Add an item from the current adapter item.
+     * Add an item from the current adapter item.  If the item's identity key already exists, then
+     * it will instead be updated.
+     *
      * @param item
-     *      Item to remove.
+     *      Item to add.
      * @return
-     *      True if the item was added or false if it was not successfully added from the adapter item.
+     *      True if the item was added or false if it was not successfully added to this adapter item.
      */
     boolean addOrUpdateItem(AdapterItem item) {
+        return false;
+    }
+
+    /**
+     * Add a collection of items to this adapter item.
+     * @param item
+     *      Items to add.
+     * @return
+     *      True if the items were added or false if it was not successfully added to this adapter item.
+     */
+    boolean addOrUpdateItems(Collection<AdapterItem> item) {
         return false;
     }
 
