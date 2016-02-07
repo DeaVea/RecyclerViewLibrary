@@ -82,10 +82,10 @@ public class AdapterGroupTests {
         group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 1", 3)));
         group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 2", 5)));
         group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 3", 7)));
-        group.addOrUpdateItem(newItem = new AdapterItem<>(new OrderTestItem("Item 4", 9)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 4", 9)));
         assertThat(group.getItemCount(), equalTo(6));
 
-        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 0", 4)));
+        group.addOrUpdateItem(newItem = new AdapterItem<>(new OrderTestItem("Item 0", 4)));
         assertThat(group.getItemCount(), equalTo(6));
         assertThat(group.getItem(2) == newItem, equalTo(true));
     }
@@ -114,6 +114,31 @@ public class AdapterGroupTests {
             newItem.add(new AdapterItem<>(new OrderTestItem("Item "  + i, i + 1)));
         }
         group.addOrUpdateItems(newItem);
+        assertThat(group.getItemCount(), equalTo(51));
+
+        // They should all be in order.
+        for (int i = 1; i < group.getItemCount(); i++) {
+            if (i == 50) {
+                assertThat(true, is(equalTo(true)));
+            }
+            assertThat("Item at " + i + " is null.", group.getItem(i), is(notNullValue()));
+            assertThat("Item at " + i + " does not have a payload.", group.getItem(i).getPayload(), is(notNullValue()));
+            assertThat("Item at " + i + " is not an ordertestitem.", group.getItem(i).getPayload(), is(instanceOf(OrderTestItem.class)));
+            final OrderTestItem item = (OrderTestItem) group.getItem(i).getPayload();
+            assertThat("Item at " + i + " is the wrong identity key. Expected: Item " + (i - 1) + "; actual: " + item.getIdentityKey(), item.getIdentityKey(), is(equalTo("Item " + (i - 1))));
+            assertThat("Item at " + i + " does not have the correct order. Expected: " + i + "; actual: " + item.getOrder(), item.getOrder(), is(equalTo(i)));
+        }
+    }
+
+    @Test
+    public void testAddOrUpdatePayloads() {
+        final AdapterItemGroup<TestItem> group = new AdapterItemGroup<>(new TestItem("Group 0"));
+        final Collection<OrderTestItem> newItem = new ArrayList<>(50);
+        for (int i = 0; i < 50; i++) {
+            newItem.add(new OrderTestItem("Item " + i, i + 1));
+        }
+
+        group.addOrUpdatePayloads(newItem);
         assertThat(group.getItemCount(), equalTo(51));
 
         // They should all be in order.

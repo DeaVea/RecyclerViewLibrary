@@ -47,14 +47,34 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
     }
 
     /**
-     * This adds a payload to the Adapter Item.  This is different than {@link #setPayload} in that
+     * This adds a payload to the AdapterItem.  This is different than {@link #setPayload} in that
      * rather this item is left untouched.  Instead, a new AdapterItem will be added to the collection.
      *
      * @param payload
-     *      Payload to add.
+     *      True if the payloads were added.
      */
     public <T extends RecyclerItem> boolean addOrUpdatePayload(T payload) {
         return addOrUpdateItem(new AdapterItemGroup<>(payload));
+    }
+
+    /**
+     * This adds the collection of payloads to the AdapterItem.
+     * @param payloads
+     *      Number of payloads to add.
+     *
+     * @return
+     *      True if the payloads were added.
+     */
+    public <T extends RecyclerItem> boolean addOrUpdatePayloads(Collection<T> payloads) {
+        if (payloads == null || payloads.isEmpty()) {
+            return false;
+        }
+
+        boolean allAdded = true;
+        for (T payload : payloads) {
+            allAdded &= addOrUpdatePayload(payload);
+        }
+        return allAdded;
     }
 
     /**
