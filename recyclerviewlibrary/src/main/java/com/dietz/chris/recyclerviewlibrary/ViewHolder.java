@@ -28,7 +28,7 @@ import android.view.ViewGroup;
 public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.ViewHolder {
 
     private final InternalClickListener<K> mClickListener;
-    private MainClickListener<K> mMainClickListener;
+    private final MainClickListener<K> mMainClickListener;
     private K mBoundItem;
 
     /**
@@ -38,7 +38,7 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
     ViewHolder(View itemView) {
         super(itemView);
         mClickListener = new InternalClickListener<>();
-        mMainClickListener = null;
+        mMainClickListener = new MainClickListener<>();
         mBoundItem = null;
     }
 
@@ -106,9 +106,7 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
     public final void bind(K item) {
         mBoundItem = item;
         mClickListener.bound(item);
-        if (mMainClickListener != null) {
-            mMainClickListener.bind(mBoundItem);
-        }
+        mMainClickListener.bind(mBoundItem);
         onBind(item);
     }
 
@@ -141,11 +139,28 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
      *      This object for chaining.
      */
     public ViewHolder<K> addMainAction(Action<K> action) {
+        mMainClickListener.setClickAction(action);
         if (action != null) {
-            itemView.setOnClickListener(mMainClickListener = new MainClickListener<K>(action));
-            mMainClickListener.bind(mBoundItem);
-        } else {
             itemView.setOnClickListener(mMainClickListener);
+        } else {
+            itemView.setOnClickListener(null);
+        }
+        return this;
+    }
+
+    /**
+     * Adds an action to the main itemview backing this viewholder on a view long click.
+     * @param action
+     *      The action to set.  If null, then the action will be removed.
+     * @return
+     *      This object for chaining.
+     */
+    public ViewHolder<K> addLongClickMainAction(Action<K> action) {
+        mMainClickListener.setLongClickAction(action);
+        if (action != null) {
+            itemView.setOnLongClickListener(mMainClickListener);
+        } else {
+            itemView.setOnLongClickListener(null);
         }
         return this;
     }
@@ -171,12 +186,22 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
     /**
      * Click listener for the main itemView that this view holder backs.
      */
-    private static class MainClickListener<K extends RecyclerItem> implements View.OnClickListener {
-        private final Action<K> mAction;
+    private static class MainClickListener<K extends RecyclerItem> implements View.OnClickListener, View.OnLongClickListener {
+        private Action<K> mClickAction;
+        private Action<K> mLongClickAction;
         private K mBoundItem;
 
-        public MainClickListener(Action<K> action) {
-            mAction = action;
+        public MainClickListener() {
+            mClickAction = null;
+            mLongClickAction = null;
+        }
+
+        public void setClickAction(Action<K> action) {
+            mClickAction = action;
+        }
+
+        public void setLongClickAction(Action<K> action) {
+            mLongClickAction = action;
         }
 
         public void bind(K item) {
@@ -185,9 +210,18 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
 
         @Override
         public void onClick(View view) {
-            if (mAction != null) {
-                mAction.action(view.getId(), mBoundItem);
+            if (mClickAction != null) {
+                mClickAction.action(view.getId(), mBoundItem);
             }
+        }
+
+        @Override
+        public boolean onLongClick(View v) {
+            if (mLongClickAction != null) {
+                mLongClickAction.action(v.getId(), mBoundItem);
+                return true;
+            }
+            return false;
         }
     }
 
@@ -196,11 +230,11 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
      */
     private static class InternalClickListener<K extends RecyclerItem> implements View.OnClickListener {
 
-        private final SparseArray<Action<K>> actions;
+        private final SparseArray<Action<K>> mClickActions;
         private K mBoundItem;
 
         public InternalClickListener() {
-            actions = new SparseArray<>(3);
+            mClickActions = new SparseArray<>(3);
         }
 
         public void bound(K item) {
@@ -209,15 +243,15 @@ public abstract class ViewHolder<K extends RecyclerItem> extends RecyclerView.Vi
 
         public void addAction(int viewId, Action<K> action) {
             if (action != null) {
-                actions.put(viewId, action);
+                mClickActions.put(viewId, action);
             } else {
-                actions.remove(viewId);
+                mClickActions.remove(viewId);
             }
         }
 
         @Override
         public void onClick(View v) {
-            final Action<K> action = actions.get(v.getId());
+            final Action<K> action = mClickActions.get(v.getId());
             if (action != null) {
                 action.action(v.getId(), mBoundItem);
             }
