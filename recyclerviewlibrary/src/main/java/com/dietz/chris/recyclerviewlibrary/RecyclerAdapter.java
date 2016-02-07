@@ -21,6 +21,7 @@ import android.view.ViewGroup;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterList;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
+import com.dietz.chris.recyclerviewlibrary.core.HandlerListListener;
 
 import java.util.Collection;
 
@@ -34,7 +35,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
 
     public RecyclerAdapter() {
         mList = new AdapterList();
-        mList.setListListener(new AdapterListListener(this));
+        mList.setListListener(new HandlerListListener(new AdapterListListener(this)));
     }
 
     /**
