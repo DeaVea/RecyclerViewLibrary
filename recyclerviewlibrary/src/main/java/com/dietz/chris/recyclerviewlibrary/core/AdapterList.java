@@ -38,6 +38,10 @@ public class AdapterList {
     public <K extends RecyclerItem> void addItem(K item) {
         mMainList.addOrUpdate(new AdapterItemGroup<>(item));
     }
+//
+//    public <K extends RecyclerItem> int replaceWithItems(Collection<K> items) {
+//
+//    }
 
     public <K extends RecyclerItem> K findPayloadWithId(String id) {
         //noinspection unchecked  This is supposed to throw a ClassCastException if it isn't what's expected anyway.

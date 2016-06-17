@@ -104,7 +104,6 @@ class AdapterItemCollection {
     public <K extends RecyclerItem> int removeItemWithPayload(K payload) {
         int removedItems = 0;
         ArrayList<AdapterItem> itemsToRemove = new ArrayList<>();
-        // TODO: This sucks.  Fix it.
         for (AdapterItem item : mList) {
             int itemsRemoved = item.removeItemWithPayload(payload);
             if (itemsRemoved == 0) {
@@ -197,6 +196,20 @@ class AdapterItemCollection {
      */
     public boolean remove(@NonNull AdapterItem item) {
         return removeItemFromHere(item) | removeItemFromCollection(item);
+    }
+
+    public int replaceAddOrUpdate(@NonNull Collection<AdapterItem> items) {
+        final Collection<String> internal = new ArrayList<>(mMap.keySet());
+        for (AdapterItem ai : items) {
+            addOrUpdate(ai);
+            internal.remove(ai.getIdentityKey());
+        }
+        // TODO:  This needs to take in to account groups as well.
+        // The rest are to be removed.
+        for (String key : internal) {
+            remove(mMap.get(key));
+        }
+        return internal.size();
     }
 
     /**

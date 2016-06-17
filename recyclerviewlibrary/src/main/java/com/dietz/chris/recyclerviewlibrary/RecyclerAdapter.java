@@ -98,6 +98,17 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
     }
 
     /**
+     * Replaces all the items in the adapter with the items provided.  If the items are null,
+     * then this will have a "clear" effect.
+     *
+     * @param items
+     *      Items to include in the adapter.
+     */
+    public void replaceAll(@Nullable Collection<? extends RecyclerItem> items) {
+
+    }
+
+    /**
      * Removes an item found in the list.  This will check the underlying key for the item, so they
      * may not be perfectly equal.
      */
