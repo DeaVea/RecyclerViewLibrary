@@ -143,7 +143,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
         if (mHolderFactory == null) {
             throw new IllegalStateException(getClass().getCanonicalName() + " does not have a " + ViewHolderFactory.class.getCanonicalName() + " set. Please call setViewHolder(ViewHolderFactory)");
         }
-        return mHolderFactory.createViewHolder(viewType);
+        return mHolderFactory.createViewHolder(parent, viewType);
     }
 
     @Override

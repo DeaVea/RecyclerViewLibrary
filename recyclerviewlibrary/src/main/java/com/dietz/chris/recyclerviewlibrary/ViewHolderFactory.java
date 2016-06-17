@@ -14,10 +14,12 @@
 
 package com.dietz.chris.recyclerviewlibrary;
 
+import android.view.ViewGroup;
+
 /**
  * ViewHolderFactory creates view holders for the {@link com.dietz.chris.recyclerviewlibrary.RecyclerAdapter}
  */
 public interface ViewHolderFactory {
 
-    ViewHolder<? extends RecyclerItem> createViewHolder(int type);
+    ViewHolder<? extends RecyclerItem> createViewHolder(ViewGroup parent, int type);
 }
