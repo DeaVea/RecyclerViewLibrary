@@ -21,6 +21,7 @@ import android.support.v7.widget.LinearLayoutManager;
 import android.support.v7.widget.RecyclerView;
 import android.view.LayoutInflater;
 import android.view.View;
+import android.view.ViewGroup;
 
 import com.dietz.chris.recyclerviewlibrary.Action;
 import com.dietz.chris.recyclerviewlibrary.RecyclerAdapter;
@@ -46,7 +47,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
         recyclerView.setAdapter(adapter = new RecyclerAdapter());
         adapter.setViewHolderFactory(new ViewHolderFactory() {
             @Override
-            public ViewHolder<? extends RecyclerItem> createViewHolder(int type) {
+            public ViewHolder<? extends RecyclerItem> createViewHolder(ViewGroup parent, int type) {
                 switch (type) {
                     case TYPE_LABEL:
                         return createLabelHolder();

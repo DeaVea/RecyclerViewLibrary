@@ -14,6 +14,8 @@
 
 package com.dietz.chris.recyclerviewlibrary;
 
+import android.view.ViewGroup;
+
 import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 
@@ -38,7 +40,7 @@ public class RecyclerAdapterTests {
         final RecyclerAdapter adapter = new RecyclerAdapter(null);
         adapter.setViewHolderFactory(new ViewHolderFactory() {
             @Override
-            public ViewHolder<? extends RecyclerItem> createViewHolder(int type) {
+            public ViewHolder<? extends RecyclerItem> createViewHolder(ViewGroup parent, int type) {
                 return null;
             }
         });
