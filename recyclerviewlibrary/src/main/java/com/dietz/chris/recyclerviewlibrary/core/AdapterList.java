@@ -18,6 +18,8 @@ import android.support.annotation.Nullable;
 
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
+import java.util.Collection;
+
 /**
  *
  */
@@ -38,10 +40,19 @@ public class AdapterList {
     public <K extends RecyclerItem> void addItem(K item) {
         mMainList.addOrUpdate(new AdapterItemGroup<>(item));
     }
-//
-//    public <K extends RecyclerItem> int replaceWithItems(Collection<K> items) {
-//
-//    }
+
+    public <K extends RecyclerItem> void replaceWithItems(Collection<K> items) {
+        // Go ahead and add or update the items we got.
+        for (K item : items) {
+            addItem(item);
+        }
+
+        // Now remove the ones we don't care about.
+        final Collection<AdapterItem> itemsToRemove = mMainList.getItemsExcludingPayloads(items);
+        for (AdapterItem item : itemsToRemove) {
+            mMainList.remove(item);
+        }
+    }
 
     public <K extends RecyclerItem> K findPayloadWithId(String id) {
         //noinspection unchecked  This is supposed to throw a ClassCastException if it isn't what's expected anyway.

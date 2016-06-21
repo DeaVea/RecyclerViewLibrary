@@ -21,6 +21,7 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
+import java.util.HashSet;
 
 /**
  *
@@ -198,20 +199,6 @@ class AdapterItemCollection {
         return removeItemFromHere(item) | removeItemFromCollection(item);
     }
 
-    public int replaceAddOrUpdate(@NonNull Collection<AdapterItem> items) {
-        final Collection<String> internal = new ArrayList<>(mMap.keySet());
-        for (AdapterItem ai : items) {
-            addOrUpdate(ai);
-            internal.remove(ai.getIdentityKey());
-        }
-        // TODO:  This needs to take in to account groups as well.
-        // The rest are to be removed.
-        for (String key : internal) {
-            remove(mMap.get(key));
-        }
-        return internal.size();
-    }
-
     /**
      * Add an item or update it if it is already in the collection.
      * @param item
@@ -227,6 +214,57 @@ class AdapterItemCollection {
             position = addInternal(item);
         }
         return position;
+    }
+
+    /**
+     * Retrieves all the adapter items in this collection that are contained within this collection.
+     * This will be determined based off their identity key.
+     *
+     * This will only return the items that are contained in this collection.  If the items are not
+     * in this collection then they will be left out, so it's possible the returned collection will
+     * be less than the size of the items given.
+     *
+     * @param items
+     *      Payloads to retrieve in this collection.
+     * @return
+     *      All the items that are in this collection that
+     */
+    /* internal */ Collection<AdapterItem> getItemsWithPayloads(Collection<? extends RecyclerItem> items) {
+        HashSet<AdapterItem> returnItems = new HashSet<>(items.size());
+        for (RecyclerItem item : items) {
+            AdapterItem containedItem = mMap.get(item.getIdentityKey());
+            if (containedItem != null) {
+                returnItems.add(containedItem);
+            }
+        }
+        return returnItems;
+    }
+
+    /**
+     * Retrieve all the adapter items in this collection that are not contained within this collection.
+     * This will be determined based off their identity key.
+     *
+     * This will only return the items that are contained in this collection which do not have the payloads
+     * provided.
+     *
+     * @param items
+     *      Payloads to exclude from the collection.
+     * @return
+     *      All the items that don't have this provided payloads.
+     */
+    /* internal */ Collection<AdapterItem> getItemsExcludingPayloads(Collection<? extends RecyclerItem> items) {
+        HashSet<String> keys = new HashSet<>(items.size());
+        for (RecyclerItem item : items) {
+            keys.add(item.getIdentityKey());
+        }
+
+        HashSet<AdapterItem> returnItems = new HashSet<>(mMap.size() - items.size());
+        for (AdapterItem item : mMap.values()) {
+            if (!keys.contains(item.getIdentityKey())) {
+                returnItems.add(item);
+            }
+        }
+        return returnItems;
     }
 
     /**

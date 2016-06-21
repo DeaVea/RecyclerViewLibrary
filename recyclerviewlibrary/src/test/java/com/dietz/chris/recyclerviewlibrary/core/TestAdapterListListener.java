@@ -25,6 +25,7 @@ public class TestAdapterListListener implements ListListener {
     ArrayList<InsertObj> itemsPosInserted = new ArrayList<>();
     ArrayList<ChangeObj> itemsPosChanged = new ArrayList<>();
     ArrayList<MoveObj> itemsMoved = new ArrayList<>();
+    ArrayList<RemoveObj> itemsRemoved = new ArrayList<>();
     ArrayList<RangeRemovedObj> itemsRangeRemoved = new ArrayList<>();
 
     public int lastItemPositionInserted() {
@@ -80,7 +81,7 @@ public class TestAdapterListListener implements ListListener {
 
     @Override
     public void onItemRemoved(int position, AdapterItem payload) {
-
+        itemsRemoved.add(new RemoveObj(payload, position));
     }
 
     public static class ChangeObj {
@@ -112,6 +113,16 @@ public class TestAdapterListListener implements ListListener {
             this.item = item;
             this.fromPosition = fromPosition;
             this.toPosition = toPosition;
+        }
+    }
+
+    public static class RemoveObj {
+        AdapterItem item;
+        int pos;
+
+        public RemoveObj(AdapterItem item, int pos) {
+            this.item = item;
+            this.pos = pos;
         }
     }
 

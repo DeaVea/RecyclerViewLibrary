@@ -22,6 +22,7 @@ import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 
 import static org.hamcrest.CoreMatchers.is;
@@ -210,5 +211,65 @@ public class RecyclerAdapterTests {
         adapter.addItems(items);
         // The previous items would just be replaced.
         assertThat(adapter.getItemCount(), is(equalTo(10)));
+    }
+
+    @Test
+    public void replaceAllItemsTests() {
+        final RecyclerAdapter adapter = new RecyclerAdapter(null);
+        adapter.addItem(new TestItem("Obj1"));
+        adapter.addItem(new TestItem("Obj2"));
+        adapter.addItem(new TestItem("Obj3"));
+        adapter.addItem(new TestItem("Obj4"));
+        adapter.addItem(new TestItem("Obj5"));
+        adapter.addItem(new TestItem("Obj6"));
+
+        assertThat(adapter.getItemCount(), is(6));
+
+        Collection<RecyclerItem> itemsToReplace = new ArrayList<>(5);
+        itemsToReplace.add(new TestItem("Obj1"));
+        itemsToReplace.add(new TestItem("Obj3"));
+        itemsToReplace.add(new TestItem("Obj5"));
+
+        adapter.replaceAll(itemsToReplace);
+
+        assertThat(adapter.getItemCount(), is(3));
+        assertThat(adapter.findAdapterItem("Obj1"), is(notNullValue()));
+        assertThat(adapter.findAdapterItem("Obj2"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj3"), is(notNullValue()));
+        assertThat(adapter.findAdapterItem("Obj4"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj5"), is(notNullValue()));
+        assertThat(adapter.findAdapterItem("Obj6"), is(nullValue()));
+
+        adapter.clear();
+        itemsToReplace.clear();
+    }
+
+    @Test
+    public void replaceAllItemsTests2() {
+        final RecyclerAdapter adapter = new RecyclerAdapter(null);
+        adapter.addItem(new TestItem("Obj1"));
+        adapter.addItem(new TestItem("Obj2"));
+        adapter.addItem(new TestItem("Obj3"));
+        adapter.addItem(new TestItem("Obj4"));
+        adapter.addItem(new TestItem("Obj5"));
+        adapter.addItem(new TestItem("Obj6"));
+
+        Collection<RecyclerItem> itemsToReplace = new ArrayList<>(5);
+        itemsToReplace.add(new TestItem("Obj7"));
+        itemsToReplace.add(new TestItem("Obj8"));
+        itemsToReplace.add(new TestItem("Obj9"));
+
+        adapter.replaceAll(itemsToReplace);
+
+        assertThat(adapter.getItemCount(), is(3));
+        assertThat(adapter.findAdapterItem("Obj1"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj2"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj3"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj4"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj5"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj6"), is(nullValue()));
+        assertThat(adapter.findAdapterItem("Obj7"), is(notNullValue()));
+        assertThat(adapter.findAdapterItem("Obj8"), is(notNullValue()));
+        assertThat(adapter.findAdapterItem("Obj9"), is(notNullValue()));
     }
 }

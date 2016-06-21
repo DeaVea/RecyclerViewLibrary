@@ -55,7 +55,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
      * @return
      *      The list that backs this adapter.
      */
-    AdapterList getList() {
+    /* internal */ AdapterList getList() {
         return mList;
     }
 
@@ -105,7 +105,7 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
      *      Items to include in the adapter.
      */
     public void replaceAll(@Nullable Collection<? extends RecyclerItem> items) {
-
+        mList.replaceWithItems(items);
     }
 
     /**

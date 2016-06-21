@@ -19,13 +19,8 @@ import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 
 import org.junit.Test;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collection;
-
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.core.Is.is;
 
 /**
  *
@@ -251,33 +246,5 @@ public class DuelCollectionTests {
         assertThat(items.removeItemWithPayload(groupPayload3), equalTo(3));
         assertThat(items.removeItemWithPayload(groupPayload1), equalTo(2));
         assertThat(items.removeItemWithPayload(groupPayload2), equalTo(2));
-    }
-
-    @Test
-    public void replaceSingleItems() {
-        final AdapterItemCollection items = new AdapterItemCollection(null);
-
-        AdapterItem<TestItem> payload1 = new AdapterItem<>(new TestItem("A"));
-        AdapterItem<TestItem> payload2 = new AdapterItem<>(new TestItem("B"));
-        AdapterItem<TestItem> payload3 = new AdapterItem<>(new TestItem("C"));
-        AdapterItem<TestItem> payload4 = new AdapterItem<>(new TestItem("D"));
-        AdapterItem<TestItem> payload5 = new AdapterItem<>(new TestItem("E"));
-
-        items.addOrUpdate(payload1);
-        items.addOrUpdate(payload2);
-        items.addOrUpdate(payload3);
-        items.addOrUpdate(payload4);
-        items.addOrUpdate(payload5);
-
-        Collection<AdapterItem> itemsToKeep = new ArrayList<AdapterItem>(Arrays.asList(payload1, payload2, payload4));
-        Collection<AdapterItem> p = itemsToKeep;
-        int removed = items.replaceAddOrUpdate(itemsToKeep);
-
-        assertThat(removed, is(2));
-        assertThat(items.contains(payload1), is(true));
-        assertThat(items.contains(payload2), is(true));
-        assertThat(items.contains(payload3), is(false));
-        assertThat(items.contains(payload4), is(true));
-        assertThat(items.contains(payload5), is(false));
     }
 }
