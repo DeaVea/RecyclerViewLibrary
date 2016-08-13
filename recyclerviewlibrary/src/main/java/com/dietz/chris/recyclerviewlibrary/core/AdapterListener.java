@@ -17,7 +17,7 @@ package com.dietz.chris.recyclerviewlibrary.core;
 import android.support.annotation.NonNull;
 
 /**
- * Internal listener for the adaptier items to communicate within themselves.  Don't make this public.
+ * Internal listener for the adapter items to communicate within themselves.  Don't make this public.
  * DON'T DO IT.
  */
 interface AdapterListener {
@@ -25,6 +25,15 @@ interface AdapterListener {
      * The underlying data of an adapter item has changed.
      */
     void itemChanged(@NonNull AdapterItem item);
+
+    /**
+     * Called when the item's visibility has changed.
+     * @param item
+     *      The item who's visiblity has changed.
+     * @param isVisible
+     *      The visibility that the item currently is.
+     */
+    void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible);
 
     /**
      * An item was added to the provided container.

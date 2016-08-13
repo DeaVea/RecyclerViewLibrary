@@ -14,13 +14,18 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import com.dietz.chris.recyclerviewlibrary.mocks.OrderTestItem;
 import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 
 import org.junit.Test;
 
+import java.util.Collection;
+
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.MatcherAssert.assertThat;
+import static org.hamcrest.core.Is.is;
 
 /**
  *
@@ -95,5 +100,81 @@ public class AdapterItemTests {
         group.addOrUpdateItem(item);
 
         assertThat(group.hasPayload(payload1), equalTo(true));
+    }
+
+    @Test
+    public void filteredOpenNullFilter() {
+        final AdapterItem item = new AdapterItem<>(new TestItem("TestItem1"));
+        assertThat(item.filteredOpen(), is(true));
+    }
+
+    @Test
+    public void hide() {
+        // As I found earlier, hide should *not* effect the item count for the base adapter.  It is *always* one.
+        final AdapterItem item = new AdapterItem<>(new TestItem("TestItem1"));
+        assertThat(item.getItemCount(), is(1));
+        item.hide();
+        assertThat(item.getItemCount(), is(1));
+        item.reveal();
+        assertThat(item.getItemCount(), is(1));
+    }
+
+    @Test
+    public void filteredClosedRightClass() {
+        final AdapterItem<TestItem> item = new AdapterItem<>(new TestItem("TestItem1"));
+        item.filter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return false;
+            }
+        }, TestItem.class);
+
+        assertThat(item.filteredOpen(), is(false));
+        assertThat(item.isHidden(), is(true));
+        assertThat(item.getItemCount(), is(1));
+
+        item.reveal();
+
+        assertThat(item.filteredOpen(), is(false));
+        assertThat(item.isHidden(), is(true));
+        assertThat(item.getItemCount(), is(1));
+
+        item.filter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return true;
+            }
+        }, TestItem.class);
+
+        assertThat(item.filteredOpen(), is(true));
+        assertThat(item.isHidden(), is(false));
+        assertThat(item.getItemCount(), is(1));
+    }
+
+    @Test
+    public void filteredOpenRightClass() {
+        final AdapterItem<TestItem> item = new AdapterItem<>(new TestItem("TestItem1"));
+        item.filter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return true;
+            }
+        }, TestItem.class);
+
+        assertThat(item.filteredOpen(), is(true));
+        assertThat(item.getItemCount(), is(1));
+    }
+
+    @Test
+    public void testGetItemsOfClass() {
+        final AdapterItem<TestItem> item = new AdapterItem<>(new TestItem("TestItem1"));
+
+        Collection<AdapterItem<TestItem>> getItems = item.getItemsOfType(TestItem.class);
+        assertThat(getItems.size(), is(1));
+        assertThat(getItems.iterator().next(), is(item));
+
+        Collection<AdapterItem<OrderTestItem>> newItems = item.getItemsOfType(OrderTestItem.class);
+        assertThat(newItems.isEmpty(), is(true));
+
     }
 }

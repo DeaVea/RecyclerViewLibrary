@@ -48,6 +48,20 @@ class AdapterItemCollection {
     }
 
     /**
+     * Apply a filter to only show the items that are in this.
+     * @param filter
+     *      Filter to apply.
+     * @param classType
+     *      Type of object this is filtering out.
+     */
+    public <K extends RecyclerItem> void applyFilter(Filter<K> filter, Class<K> classType) {
+        Collection<AdapterItem<K>> items = getItemsWithPayloadType(classType);
+        for (AdapterItem<K> item : items) {
+            item.filter(filter, classType);
+        }
+    }
+
+    /**
      * Returns if the payload is in the list.
      */
     public <K extends RecyclerItem> boolean containsPayload(K payload) {
@@ -214,6 +228,15 @@ class AdapterItemCollection {
             position = addInternal(item);
         }
         return position;
+    }
+
+    /* internal */ <T extends RecyclerItem> Collection<AdapterItem<T>> getItemsWithPayloadType(Class<T> cls) {
+        HashSet<AdapterItem<T>> returnItems = new HashSet<>();
+        for (AdapterItem item : mList) {
+            //noinspection unchecked If the contract holds up then we'll work.
+            returnItems.addAll(item.getItemsOfType(cls));
+        }
+        return returnItems;
     }
 
     /**
@@ -427,6 +450,19 @@ class AdapterItemCollection {
         public void itemChanged(@NonNull AdapterItem item) {
             int realIndex = Utils.getPosition(item, mList);
             mListener.onItemChanged(realIndex, item);
+        }
+
+        @Override
+        public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible) {
+            int realIndex = Utils.getPosition(item, mList);
+            int count = item.getItemCount();
+            if (isVisible) {
+                mFullSize += count;
+                onItemRangeInserted(realIndex, count);
+            } else {
+                mFullSize -= item.getItemCount();
+                onItemRangeRemoved(realIndex, count);
+            }
         }
 
         @Override

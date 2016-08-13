@@ -16,7 +16,9 @@ package com.dietz.chris.recyclerviewlibrary.core;
 
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
@@ -52,7 +54,8 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
 
     @Override
     public final int getItemCount() {
-        return (isOpen()) ? 1 + mItems.size() :  1;
+        int baseCount = super.getItemCount();
+        return (isOpen()) ? baseCount + mItems.size() :  baseCount;
     }
 
     @Override
@@ -100,6 +103,13 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     @Override
     public final boolean containsItem(AdapterItem item) {
         return mItems.contains(item);
+    }
+
+    @Override
+    public <T extends RecyclerItem> Collection<AdapterItem<T>> getItemsOfType(Class<T> cls) {
+        final Collection<AdapterItem<T>> items = super.getItemsOfType(cls);
+        items.addAll(mItems.getItemsWithPayloadType(cls));
+        return items;
     }
 
     protected final void notifyItemsAdded(int startingAt, int size) {

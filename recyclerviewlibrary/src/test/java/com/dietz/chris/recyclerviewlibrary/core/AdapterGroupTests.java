@@ -154,4 +154,57 @@ public class AdapterGroupTests {
             assertThat("Item at " + i + " does not have the correct order. Expected: " + i + "; actual: " + item.getOrder(), item.getOrder(), is(equalTo(i)));
         }
     }
+
+    @Test
+    public void testFilter() {
+        final AdapterItemGroup group = new AdapterItemGroup<>(new TestItem("Group 0"));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 0", 1)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 1", 3)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 2", 5)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 3", 7)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 4", 9)));
+
+        assertThat(group.getItemCount(), is(6));
+
+        group.filter(new Filter<OrderTestItem>() {
+            @Override
+            public boolean accept(OrderTestItem value) {
+                return value.getIdentityKey().contains("1");
+            }
+        }, OrderTestItem.class);
+
+        assertThat(group.getItemCount(), is(2));
+
+        group.filter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return !value.getIdentityKey().contains("0");
+            }
+        }, TestItem.class);
+
+        assertThat(group.getItemCount(), is(2));
+        assertThat(group.isHidden(), is(true));
+
+        group.filter(null, OrderTestItem.class);
+
+        assertThat(group.getItemCount(), is(6));
+        assertThat(group.isHidden(), is(true));
+    }
+
+    @Test
+    public void testGetItemsOfClass() {
+        final AdapterItemGroup group = new AdapterItemGroup<>(new TestItem("Group 0"));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 0", 1)));
+        group.addOrUpdateItem(new AdapterItem<>(new TestItem("Item 1")));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 2", 5)));
+        group.addOrUpdateItem(new AdapterItem<>(new TestItem("Item 3")));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 4", 9)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 5", 9)));
+
+        Collection<TestItem> testItems = group.getItemsOfType(TestItem.class);
+        assertThat(testItems.size(), is(3));
+
+        Collection<TestItem> orderedItems = group.getItemsOfType(OrderTestItem.class);
+        assertThat(orderedItems.size(), is(4));
+    }
 }

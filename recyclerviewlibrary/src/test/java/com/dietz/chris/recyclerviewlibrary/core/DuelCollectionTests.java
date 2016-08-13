@@ -14,18 +14,180 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 import com.dietz.chris.recyclerviewlibrary.mocks.OrderTestItem;
 import com.dietz.chris.recyclerviewlibrary.mocks.TestItem;
 
 import org.junit.Test;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import static org.hamcrest.CoreMatchers.equalTo;
+import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
  *
  */
 public class DuelCollectionTests {
+
+    @Test
+    public void filterItems() {
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
+        items.addOrUpdate(new AdapterItem<>(new TestItem("F")));
+        items.addOrUpdate(new AdapterItem<>(new TestItem("G")));
+        items.addOrUpdate(new AdapterItem<>(new TestItem("H")));
+
+        items.applyFilter(new Filter<OrderTestItem>() {
+            @Override
+            public boolean accept(OrderTestItem value) {
+                return value.getIdentityKey().equals("B");
+            }
+        }, OrderTestItem.class);
+
+        // One ordered item and three regular
+        assertThat(items.size(), is(4));
+
+        assertThat(listListener.itemsRangeRemoved.size(), is(4));
+
+        items.applyFilter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return value.getIdentityKey().equals("G");
+            }
+        }, TestItem.class);
+
+        assertThat(items.size(), is(2));
+
+        assertThat(listListener.itemsRangeRemoved.size(), is(6));
+
+        items.applyFilter(null, OrderTestItem.class);
+
+        assertThat(items.size(), is(6));
+
+        assertThat(listListener.itemsRangeInserted.size(), is(4));
+
+        items.applyFilter(null, TestItem.class);
+
+        assertThat(items.size(), is(8));
+
+        assertThat(listListener.itemsRangeInserted.size(), is(6));
+    }
+
+    @Test
+    public void filterDeep() {
+        Collection<AdapterItem> deepItems = new ArrayList<>(3);
+        deepItems.add(new AdapterItem<>(new TestItem("F")));
+        deepItems.add(new AdapterItem<>(new TestItem("G")));
+        deepItems.add(new AdapterItem<>(new TestItem("H")));
+
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+
+        AdapterItemGroup group = new AdapterItemGroup<>(new OrderTestItem("A", 0));
+        group.addOrUpdateItems(deepItems);
+        items.addOrUpdate(group);
+
+        deepItems = new ArrayList<>(3);
+        deepItems.add(new AdapterItem<>(new TestItem("F")));
+        deepItems.add(new AdapterItem<>(new TestItem("G")));
+        deepItems.add(new AdapterItem<>(new TestItem("H")));
+
+        group = new AdapterItemGroup<>(new OrderTestItem("B", 0));
+        group.addOrUpdateItems(deepItems);
+        items.addOrUpdate(group);
+
+        deepItems = new ArrayList<>(3);
+        deepItems.add(new AdapterItem<>(new TestItem("F")));
+        deepItems.add(new AdapterItem<>(new TestItem("G")));
+        deepItems.add(new AdapterItem<>(new TestItem("H")));
+
+        group = new AdapterItemGroup<>(new OrderTestItem("C", 0));
+        group.addOrUpdateItems(deepItems);
+        items.addOrUpdate(group);
+
+        deepItems = new ArrayList<>(3);
+        deepItems.add(new AdapterItem<>(new TestItem("F")));
+        deepItems.add(new AdapterItem<>(new TestItem("G")));
+        deepItems.add(new AdapterItem<>(new TestItem("H")));
+
+        group = new AdapterItemGroup<>(new OrderTestItem("D", 0));
+        group.addOrUpdateItems(deepItems);
+        items.addOrUpdate(group);
+
+        deepItems = new ArrayList<>(3);
+        deepItems.add(new AdapterItem<>(new TestItem("F")));
+        deepItems.add(new AdapterItem<>(new TestItem("G")));
+        deepItems.add(new AdapterItem<>(new TestItem("H")));
+
+        group = new AdapterItemGroup<>(new OrderTestItem("E", 0));
+        group.addOrUpdateItems(deepItems);
+        items.addOrUpdate(group);
+
+        assertThat(items.size(), is(20));
+
+        items.applyFilter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return value.getIdentityKey().equals("G");
+            }
+        }, TestItem.class);
+
+        assertThat(items.size(), is(10));
+
+        items.applyFilter(null, TestItem.class);
+
+        assertThat(items.size(), is(20));
+
+        items.applyFilter(new Filter<OrderTestItem>() {
+            @Override
+            public boolean accept(OrderTestItem value) {
+                return value.getIdentityKey().equals("B");
+            }
+        }, OrderTestItem.class);
+
+        assertThat(items.size(), is(4));
+
+        items.applyFilter(null, OrderTestItem.class);
+
+        assertThat(items.size(), is(20));
+    }
+
+    @Test
+    public void getItemsWithPayloadType() {
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
+        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
+
+        Collection<AdapterItem<OrderTestItem>> orderedItems = items.getItemsWithPayloadType(OrderTestItem.class);
+        assertThat(orderedItems.size(), is(5));
+
+        Collection<AdapterItem<TestItem>> regularItems = items.getItemsWithPayloadType(TestItem.class);
+        assertThat(regularItems.isEmpty(), is(true));
+
+        items.addOrUpdate(new AdapterItem<>(new TestItem("F")));
+        items.addOrUpdate(new AdapterItem<>(new TestItem("G")));
+        items.addOrUpdate(new AdapterItem<>(new TestItem("H")));
+
+        orderedItems = items.getItemsWithPayloadType(OrderTestItem.class);
+        assertThat(orderedItems.size(), is(5));
+
+        regularItems = items.getItemsWithPayloadType(TestItem.class);
+        assertThat(regularItems.size(), is(3));
+    }
 
     @Test
     public void addAndSizeTests() {
