@@ -235,11 +235,6 @@ class HashArrayList<T extends Keyed> implements List<T> {
     }
 
     @Override
-    public int lastIndexOf(Object object) {
-        return mList.lastIndexOf(object);
-    }
-
-    @Override
     public ListIterator<T> listIterator() {
         return mList.listIterator();
     }
@@ -248,6 +243,11 @@ class HashArrayList<T extends Keyed> implements List<T> {
     @Override
     public ListIterator<T> listIterator(int location) {
         return mList.listIterator(location);
+    }
+
+    @Override
+    public int lastIndexOf(Object object) {
+        return mList.lastIndexOf(object);
     }
 
     @Override

@@ -22,6 +22,9 @@ import org.junit.Test;
 import java.util.ArrayList;
 
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.not;
+import static org.hamcrest.CoreMatchers.notNullValue;
+import static org.hamcrest.CoreMatchers.nullValue;
 import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
@@ -57,6 +60,31 @@ public class HashArrayListTests {
         assertThat(list.get(0), is(sameInstance(class1)));
         assertThat(list.get(1), is(sameInstance(class2)));
         assertThat(list.get(2), is(sameInstance(class3)));
+    }
+
+    @Test
+    public void getKey() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+
+        assertThat(list.get(class1.getIdentityKey()), is(sameInstance(class1)));
+        assertThat(list.get(class2.getIdentityKey()), is(sameInstance(class2)));
+        assertThat(list.get(class3.getIdentityKey()), is(sameInstance(class3)));
+    }
+
+    @Test
+    public void getReal() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+
+        assertThat(list.getReal(new KeyClass(class1.getIdentityKey())), is(sameInstance(class1)));
+        assertThat(list.getReal(new KeyClass(class2.getIdentityKey())), is(sameInstance(class2)));
+        assertThat(list.getReal(new KeyClass(class3.getIdentityKey())), is(sameInstance(class3)));
+        assertThat(list.getReal(new KeyClass(class4.getIdentityKey())), is(nullValue()));
+
+        assertThat(list.getReal("notKeyed"), is(nullValue()));
     }
 
     @Test
@@ -142,6 +170,22 @@ public class HashArrayListTests {
         assertThat(newList.safeAdd(-1, class1), is(0));
 
         assertThat(newList.get(0), is(sameInstance(class1)));
+    }
+
+    @Test
+    public void indexOf() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.indexOf(class1), is(0));
+        assertThat(list.indexOf(class2), is(1));
+        assertThat(list.indexOf(class3), is(2));
+        assertThat(list.indexOf(class4), is(3));
+        assertThat(list.indexOf(class5), is(4));
+        assertThat(list.indexOf("Not"), is(-1));
     }
 
     @Test
@@ -339,6 +383,49 @@ public class HashArrayListTests {
         arrayList.add(class5);
 
         assertThat(list.containsAll(arrayList), is(false));
+    }
+
+    @Test
+    public void equals() {
+        assertThat(list.equals(list), is(true));
+
+        assertThat(list.equals(new HashArrayList<KeyClass>()), is(true));
+
+        list.add(class1);
+        list.add(class2);
+
+        assertThat(list.equals(new HashArrayList<KeyClass>()), is(false));
+
+        HashArrayList<Keyed> newList = new HashArrayList<>();
+        newList.add(class1);
+        newList.add(class2);
+
+        assertThat(list.equals(newList), is(true));
+
+        assertThat(list.equals(null), is(false));
+    }
+
+    @Test
+    public void hashCodeTest() {
+        assertThat(list.hashCode(), is(list.hashCode()));
+
+        assertThat(list.hashCode(), is(new HashArrayList<>().hashCode()));
+
+        list.add(class1);
+
+        assertThat(list.hashCode(), is(not(new HashArrayList<>().hashCode())));
+    }
+
+    @Test
+    public void iterator() {
+        assertThat(list.iterator(), is(notNullValue()));
+        assertThat(list.listIterator(), is(notNullValue()));
+
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+
+        assertThat(list.listIterator(2), is(notNullValue()));
     }
 
     private static class KeyClass implements Keyed {
