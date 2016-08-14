@@ -163,7 +163,7 @@ public class HashArrayListTests {
     }
 
     @Test
-    public void addAllLocation() {
+    public void addAllIndex() {
         ArrayList<KeyClass> newList = new ArrayList<>();
         newList.add(class1);
         newList.add(class2);
@@ -225,6 +225,120 @@ public class HashArrayListTests {
         assertThat(list.get(2), is(sameInstance(newClass3)));
         assertThat(list.get(3), is(sameInstance(newClass4)));
         assertThat(list.get(4), is(sameInstance(newClass5)));
+    }
+
+    @Test
+    public void addAllIndexReplace() {
+        ArrayList<KeyClass> newList = new ArrayList<>();
+        newList.add(class1);
+        newList.add(class2);
+        newList.add(class3);
+        newList.add(class4);
+        newList.add(class5);
+
+        list.addAll(newList);
+
+        newList.clear();
+
+        KeyClass newClass1 = new KeyClass(class1.getIdentityKey());
+        KeyClass newClass2 = new KeyClass(class2.getIdentityKey());
+        KeyClass newClass3 = new KeyClass(class3.getIdentityKey());
+        KeyClass newClass4 = new KeyClass(class4.getIdentityKey());
+        KeyClass newClass5 = new KeyClass(class5.getIdentityKey());
+
+        newList.add(newClass2);
+        newList.add(newClass1);
+
+        list.addAll(0, newList);
+
+        newList.clear();
+        newList.add(newClass5);
+        newList.add(newClass4);
+        newList.add(newClass3);
+
+        list.addAll(2, newList);
+
+        assertThat(list.get(0), is(sameInstance(newClass2)));
+        assertThat(list.get(1), is(sameInstance(newClass1)));
+        assertThat(list.get(2), is(sameInstance(newClass5)));
+        assertThat(list.get(3), is(sameInstance(newClass4)));
+        assertThat(list.get(4), is(sameInstance(newClass3)));
+    }
+
+    @Test
+    public void clear() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.size(), is(5));
+
+        list.clear();
+
+        assertThat(list.size(), is(0));
+        assertThat(list.contains(class1), is(false));
+        assertThat(list.contains(class2), is(false));
+        assertThat(list.contains(class3), is(false));
+        assertThat(list.contains(class4), is(false));
+        assertThat(list.contains(class5), is(false));
+    }
+
+    @Test
+    public void size() {
+        assertThat(list.isEmpty(), is(true));
+        assertThat(list.size(), is(0));
+
+        list.add(class1);
+        assertThat(list.isEmpty(), is(false));
+        assertThat(list.size(), is(1));
+
+        list.add(class2);
+        assertThat(list.isEmpty(), is(false));
+        assertThat(list.size(), is(2));
+
+        list.add(class3);
+        assertThat(list.isEmpty(), is(false));
+        assertThat(list.size(), is(3));
+
+        list.add(class4);
+        assertThat(list.isEmpty(), is(false));
+        assertThat(list.size(), is(4));
+    }
+
+    @Test
+    public void contains() {
+        assertThat(list.contains(class1), is(false));
+
+        list.add(class1);
+
+        assertThat(list.contains(class1), is(true));
+
+        assertThat(list.contains(null), is(false));
+
+        assertThat(list.contains("NotKeyed"), is(false));
+    }
+
+    @Test
+    public void containsAll() {
+        assertThat(list.containsAll(new ArrayList<>()), is(true));
+
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+
+        ArrayList<Keyed> arrayList = new ArrayList<>();
+        arrayList.add(class1);
+        arrayList.add(class2);
+        arrayList.add(class3);
+
+        assertThat(list.containsAll(arrayList), is(true));
+
+        arrayList.add(class5);
+
+        assertThat(list.containsAll(arrayList), is(false));
     }
 
     private static class KeyClass implements Keyed {

@@ -174,7 +174,7 @@ class HashArrayList<T extends Keyed> implements List<T> {
 
     @Override
     public boolean contains(Object object) {
-        return object != null && object instanceof AdapterItem && mMap.containsKey(((AdapterItem) object).getIdentityKey());
+        return object != null && object instanceof Keyed && mMap.containsKey(((Keyed) object).getIdentityKey());
     }
 
     @Override
