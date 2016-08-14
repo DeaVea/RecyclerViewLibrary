@@ -26,7 +26,7 @@ import java.util.List;
 /**
  *
  */
-public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
+public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<AdapterItem> {
 
     private K mPayload;
 
@@ -438,6 +438,7 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
      * @return
      *      A unique key used to identify the object.
      */
+    @Override
     @NonNull
     public String getIdentityKey() {
         if (mDefaultIdentityKey == null) {

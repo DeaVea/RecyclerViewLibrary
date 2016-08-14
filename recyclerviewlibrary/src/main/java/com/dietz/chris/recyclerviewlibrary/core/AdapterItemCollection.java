@@ -20,7 +20,6 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
-import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -28,8 +27,7 @@ import java.util.HashSet;
  */
 class AdapterItemCollection {
 
-    private final ArrayList<AdapterItem> mList;
-    private final HashMap<String, AdapterItem> mMap;
+    private final HashArrayList<AdapterItem> mList;
     private final ListListener mListener;
     private final InternalItemListener mItemListener;
 
@@ -40,8 +38,7 @@ class AdapterItemCollection {
     private int mFullSize;
 
     public AdapterItemCollection(ListListener listener) {
-        mList = new ArrayList<>();
-        mMap = new HashMap<>();
+        mList = new HashArrayList<>();
         mItemListener = new InternalItemListener();
         mListener = listener;
         mFullSize = 0;
@@ -98,7 +95,7 @@ class AdapterItemCollection {
      *      AdapterItem found with the given key or null if it is not in the list.
      */
     public AdapterItem findItemWithKey(String key) {
-        AdapterItem returnItem = mMap.get(key);
+        AdapterItem returnItem = mList.get(key);
         if (returnItem == null) {
             for (AdapterItem item : mList) {
                 if ((returnItem = item.getItemWithIdentityKey(key)) != null) {
@@ -142,10 +139,7 @@ class AdapterItemCollection {
      *      True if the item is in the collection or false otherwise.
      */
     public boolean contains(AdapterItem item) {
-        if (item == null) {
-            return false;
-        }
-        if (mMap.containsKey(item.getIdentityKey())) {
+        if (mList.contains(item)) {
             return true;
         }
         for (AdapterItem internalItem : mList) {
@@ -172,7 +166,6 @@ class AdapterItemCollection {
         int size = mFullSize;
         unregisterAllListener(mList);
         mList.clear();
-        mMap.clear();
         mFullSize = 0;
         onItemRangeRemoved(0, size);
     }
@@ -222,7 +215,7 @@ class AdapterItemCollection {
      */
     public int addOrUpdate(@NonNull AdapterItem item) {
         int position;
-        if (mMap.containsKey(item.getIdentityKey())) {
+        if (mList.contains(item)) {
             position = updateInternal(item);
         } else {
             position = addInternal(item);
@@ -255,7 +248,7 @@ class AdapterItemCollection {
     /* internal */ Collection<AdapterItem> getItemsWithPayloads(Collection<? extends RecyclerItem> items) {
         HashSet<AdapterItem> returnItems = new HashSet<>(items.size());
         for (RecyclerItem item : items) {
-            AdapterItem containedItem = mMap.get(item.getIdentityKey());
+            AdapterItem containedItem = mList.get(item.getIdentityKey());
             if (containedItem != null) {
                 returnItems.add(containedItem);
             }
@@ -281,8 +274,8 @@ class AdapterItemCollection {
             keys.add(item.getIdentityKey());
         }
 
-        HashSet<AdapterItem> returnItems = new HashSet<>(mMap.size() - items.size());
-        for (AdapterItem item : mMap.values()) {
+        HashSet<AdapterItem> returnItems = new HashSet<>(mList.size() - items.size());
+        for (AdapterItem item : mList) {
             if (!keys.contains(item.getIdentityKey())) {
                 returnItems.add(item);
             }
@@ -312,14 +305,13 @@ class AdapterItemCollection {
      *      Item to remove.  It must be in this collection.
      */
     private boolean removeItemFromHere(AdapterItem item) {
-        final AdapterItem oldItem = mMap.remove(item.getIdentityKey());
+        final int index = mList.indexOf(item);
+        final AdapterItem oldItem = mList.remove(item.getIdentityKey());
         if (oldItem != null) {
             int numberOfItems = oldItem.getItemCount();
             mFullSize -= numberOfItems;
-            int index = mList.indexOf(oldItem);
+
             final int indexInFull = Utils.adjustPositionForItems(index, mList);
-            mList.remove(oldItem);
-            mMap.remove(oldItem.getIdentityKey());
             oldItem.unbindListener();
 
             if (numberOfItems == 1) {
@@ -353,23 +345,20 @@ class AdapterItemCollection {
      *      New position of the item in the entire list.
      */
     private int updateInternal(AdapterItem item) {
-        AdapterItem oldItem = mMap.get(item.getIdentityKey());
+        AdapterItem oldItem = mList.getReal(item);
         oldItem.unbindListener();
-        item.bindList(mItemListener);
 
-        mMap.put(item.getIdentityKey(), item);
+        item.bindList(mItemListener);
 
         int oldPositionInMyList = mList.indexOf(oldItem);
         int oldPositionInOverallList = Utils.adjustPositionForItems(oldPositionInMyList, mList);
+
         mList.remove(oldPositionInMyList);
 
         int newPositionInMyList = Utils.getPositionInList(item, mList);
         int newPositionInOverallList = Utils.adjustPositionForItems(newPositionInMyList, mList);
-        if (newPositionInMyList >= mList.size()) {
-            mList.add(item);
-        } else {
-            mList.add(newPositionInMyList, item);
-        }
+
+        mList.safeAdd(newPositionInMyList, item);
 
         mFullSize += item.getItemCount() - oldItem.getItemCount();
 
@@ -390,15 +379,11 @@ class AdapterItemCollection {
      */
     private int addInternal(AdapterItem item) {
         item.bindList(mItemListener);
-        mMap.put(item.getIdentityKey(), item);
+
         int positionInMyList = Utils.getPositionInList(item, mList);
         int positionInOverallList = Utils.adjustPositionForItems(positionInMyList, mList);
 
-        if (positionInMyList >= mList.size()) {
-            mList.add(item);
-        } else {
-            mList.add(positionInMyList, item);
-        }
+        mList.safeAdd(positionInMyList, item);
 
         mFullSize += item.getItemCount();
 
