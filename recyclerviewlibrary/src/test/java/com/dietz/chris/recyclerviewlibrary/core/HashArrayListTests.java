@@ -20,7 +20,10 @@ import org.junit.Before;
 import org.junit.Test;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
 
+import static org.hamcrest.CoreMatchers.instanceOf;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.not;
 import static org.hamcrest.CoreMatchers.notNullValue;
@@ -79,10 +82,10 @@ public class HashArrayListTests {
         list.add(class2);
         list.add(class3);
 
-        assertThat(list.getReal(new KeyClass(class1.getIdentityKey())), is(sameInstance(class1)));
-        assertThat(list.getReal(new KeyClass(class2.getIdentityKey())), is(sameInstance(class2)));
-        assertThat(list.getReal(new KeyClass(class3.getIdentityKey())), is(sameInstance(class3)));
-        assertThat(list.getReal(new KeyClass(class4.getIdentityKey())), is(nullValue()));
+        assertThat(list.getReal(new KeyClass(class1)), is(sameInstance(class1)));
+        assertThat(list.getReal(new KeyClass(class2)), is(sameInstance(class2)));
+        assertThat(list.getReal(new KeyClass(class3)), is(sameInstance(class3)));
+        assertThat(list.getReal(new KeyClass(class4)), is(nullValue()));
 
         assertThat(list.getReal("notKeyed"), is(nullValue()));
     }
@@ -186,6 +189,22 @@ public class HashArrayListTests {
         assertThat(list.indexOf(class4), is(3));
         assertThat(list.indexOf(class5), is(4));
         assertThat(list.indexOf("Not"), is(-1));
+    }
+
+    @Test
+    public void lastIndexOf() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.lastIndexOf(class1), is(0));
+        assertThat(list.lastIndexOf(class2), is(1));
+        assertThat(list.lastIndexOf(class3), is(2));
+        assertThat(list.lastIndexOf(class4), is(3));
+        assertThat(list.lastIndexOf(class5), is(4));
+        assertThat(list.lastIndexOf("Not"), is(-1));
     }
 
     @Test
@@ -428,6 +447,128 @@ public class HashArrayListTests {
         assertThat(list.listIterator(2), is(notNullValue()));
     }
 
+    @Test(expected = IndexOutOfBoundsException.class)
+    public void removeIndex() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.remove(0), is(sameInstance(class1)));
+        assertThat(list.remove(2), is(sameInstance(class4)));
+
+        list.remove(5);
+    }
+
+    @Test
+    public void removeObject() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.remove(new KeyClass(class1)), is(true));
+        assertThat(list.remove(new KeyClass(class3)), is(true));
+        assertThat(list.remove(new KeyClass(class5)), is(true));
+        assertThat(list.remove(new KeyClass("Not")), is(false));
+    }
+
+    @Test
+    public void removeKey() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        assertThat(list.remove(class1.getIdentityKey()), is(class1));
+        assertThat(list.remove(class3.getIdentityKey()), is(class3));
+        assertThat(list.remove(class5.getIdentityKey()), is(class5));
+    }
+
+    @Test
+    public void removeAll() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        ArrayList reallist = new ArrayList(Arrays.asList(new KeyClass(class1), new KeyClass(class3), new KeyClass(class5), new KeyClass("Not")));
+
+        list.removeAll(reallist);
+
+        assertThat(list.contains(class1), is(false));
+        assertThat(list.contains(class3), is(false));
+        assertThat(list.contains(class5), is(false));
+        assertThat(list.contains(class2), is(true));
+        assertThat(list.contains(class4), is(true));
+    }
+
+    @Test
+    public void sublist() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        List<KeyClass> sublist = list.subList(1, 3);
+        assertThat(sublist.size(), is(2));
+
+        assertThat(sublist.get(0), is(class2));
+        assertThat(sublist.get(1), is(class3));
+    }
+
+    @Test
+    public void toArray() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        Object[] array = list.toArray();
+
+        assertThat(array, is(notNullValue()));
+        assertThat(array.length, is(5));
+        assertThat(array[0], is(instanceOf(KeyClass.class)));
+        assertThat((KeyClass) array[0], is(sameInstance(class1)));
+        assertThat(array[1], is(instanceOf(KeyClass.class)));
+        assertThat((KeyClass) array[1], is(sameInstance(class2)));
+        assertThat(array[2], is(instanceOf(KeyClass.class)));
+        assertThat((KeyClass) array[2], is(sameInstance(class3)));
+        assertThat(array[3], is(instanceOf(KeyClass.class)));
+        assertThat((KeyClass) array[3], is(sameInstance(class4)));
+        assertThat(array[4], is(instanceOf(KeyClass.class)));
+        assertThat((KeyClass) array[4], is(sameInstance(class5)));
+    }
+
+    @Test
+    public void toArrayAgain() {
+        list.add(class1);
+        list.add(class2);
+        list.add(class3);
+        list.add(class4);
+        list.add(class5);
+
+        KeyClass[] array = list.toArray(new KeyClass[list.size()]);
+        assertThat(array, is(notNullValue()));
+        assertThat(array.length, is(5));
+        assertThat(array[0], is(instanceOf(KeyClass.class)));
+        assertThat(array[0], is(sameInstance(class1)));
+        assertThat(array[1], is(instanceOf(KeyClass.class)));
+        assertThat(array[1], is(sameInstance(class2)));
+        assertThat(array[2], is(instanceOf(KeyClass.class)));
+        assertThat(array[2], is(sameInstance(class3)));
+        assertThat(array[3], is(instanceOf(KeyClass.class)));
+        assertThat(array[3], is(sameInstance(class4)));
+        assertThat(array[4], is(instanceOf(KeyClass.class)));
+        assertThat(array[4], is(sameInstance(class5)));
+    }
+
     private static class KeyClass implements Keyed {
         private static int count;
 
@@ -440,6 +581,10 @@ public class HashArrayListTests {
         public KeyClass(String key) {
             this.key = key;
             ++count;
+        }
+
+        public KeyClass(KeyClass keyClass) {
+            this(keyClass.key);
         }
 
         @NonNull
