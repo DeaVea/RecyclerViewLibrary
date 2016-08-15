@@ -182,11 +182,15 @@ public class AdapterGroupTests {
             }
         }, TestItem.class);
 
-        assertThat(group.getItemCount(), is(2));
+        assertThat(group.getItemCount(), is(0));
         assertThat(group.isHidden(), is(true));
 
         group.filter(null, OrderTestItem.class);
 
+        assertThat(group.getItemCount(), is(0)); // Full group is still hidden.
+        assertThat(group.isHidden(), is(true));
+
+        group.filter(null, TestItem.class);
         assertThat(group.getItemCount(), is(6));
         assertThat(group.isHidden(), is(true));
     }

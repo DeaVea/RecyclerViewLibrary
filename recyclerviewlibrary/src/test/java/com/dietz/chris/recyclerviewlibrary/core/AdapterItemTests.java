@@ -114,7 +114,7 @@ public class AdapterItemTests {
         final AdapterItem item = new AdapterItem<>(new TestItem("TestItem1"));
         assertThat(item.getItemCount(), is(1));
         item.hide();
-        assertThat(item.getItemCount(), is(1));
+        assertThat(item.getItemCount(), is(0));
         item.reveal();
         assertThat(item.getItemCount(), is(1));
     }
@@ -131,13 +131,13 @@ public class AdapterItemTests {
 
         assertThat(item.filteredOpen(), is(false));
         assertThat(item.isHidden(), is(true));
-        assertThat(item.getItemCount(), is(1));
+        assertThat(item.getItemCount(), is(0));
 
         item.reveal();
 
         assertThat(item.filteredOpen(), is(false));
         assertThat(item.isHidden(), is(true));
-        assertThat(item.getItemCount(), is(1));
+        assertThat(item.getItemCount(), is(0));
 
         item.filter(new Filter<TestItem>() {
             @Override
