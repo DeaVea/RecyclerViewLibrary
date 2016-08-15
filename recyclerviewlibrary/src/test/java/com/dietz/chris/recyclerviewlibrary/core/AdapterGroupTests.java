@@ -192,7 +192,7 @@ public class AdapterGroupTests {
 
         group.filter(null, TestItem.class);
         assertThat(group.getItemCount(), is(6));
-        assertThat(group.isHidden(), is(true));
+        assertThat(group.isHidden(), is(false));
     }
 
     @Test

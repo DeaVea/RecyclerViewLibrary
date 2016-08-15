@@ -32,8 +32,10 @@ interface AdapterListener {
      *      The item who's visiblity has changed.
      * @param isVisible
      *      The visibility that the item currently is.
+     * @param itemCount
+     *      The number of items that have been affected by the change.
      */
-    void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible);
+    void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int itemCount);
 
     /**
      * An item was added to the provided container.

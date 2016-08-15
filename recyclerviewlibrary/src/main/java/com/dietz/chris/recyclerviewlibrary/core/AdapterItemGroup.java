@@ -55,7 +55,11 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     @Override
     public final int getItemCount() {
         int baseCount = super.getItemCount();
-        return (isOpen()) ? baseCount + mItems.size() :  baseCount;
+        if (baseCount > 0) {
+            return (isOpen()) ? baseCount + mItems.size() : baseCount;
+        } else {
+            return baseCount;
+        }
     }
 
     @Override

@@ -68,12 +68,19 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      * Internal implementation of filter.  Call this when we've proven that the class is correct.
      */
     /* internal */ void applyFilter(Filter<K> filter) {
+        int count = getItemCount();
         mMyFilter = filter;
         boolean filteredOpen = filteredOpen();
         if (!filteredOpen) {
-            hide();
+            if (count > 0) {
+                onHidden();
+                notifyVisibilityChange(count);
+            }
         } else {
-            reveal();
+            if (count == 0) {
+                onReveal();
+                notifyVisibilityChange(getItemCount());
+            }
         }
     }
 
@@ -127,9 +134,10 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      */
     public void hide() {
         if (!mIsHidden) {
+            int count = getItemCount();
             mIsHidden = true;
             onHidden();
-            notifyVisibilityChange();
+            notifyVisibilityChange(count);
         }
     }
 
@@ -138,7 +146,7 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
             mIsHidden = false;
             if (filteredOpen()) {
                 onReveal();
-                notifyVisibilityChange();
+                notifyVisibilityChange(getItemCount());
             }
         }
     }
@@ -224,7 +232,7 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      *
      */
     int getItemCount() {
-        return 1;
+        return isHidden() ? 0 : 1;
     }
 
     /**
@@ -399,9 +407,9 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
     /**
      * Notify that this item visibility has changed.
      */
-    protected void notifyVisibilityChange() {
+    protected void notifyVisibilityChange(int itemsChanged) {
         if (mListener != null) {
-            mListener.itemVisibilityChange(this, !isHidden());
+            mListener.itemVisibilityChange(this, !isHidden(), itemsChanged);
         }
     }
 

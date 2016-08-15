@@ -438,14 +438,14 @@ class AdapterItemCollection {
         }
 
         @Override
-        public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible) {
+        public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int itemsCount) {
             int realIndex = Utils.getPosition(item, mList);
-            int count = item.getItemCount();
+            int count = itemsCount;
             if (isVisible) {
                 mFullSize += count;
                 onItemRangeInserted(realIndex, count);
             } else {
-                mFullSize -= item.getItemCount();
+                mFullSize -= count;
                 onItemRangeRemoved(realIndex, count);
             }
         }
