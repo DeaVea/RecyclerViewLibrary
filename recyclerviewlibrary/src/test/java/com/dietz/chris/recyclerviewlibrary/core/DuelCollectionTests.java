@@ -55,6 +55,10 @@ public class DuelCollectionTests {
 
         // One ordered item and three regular
         assertThat(items.size(), is(4));
+        assertThat(items.get(0).getIdentityKey(), is("B")); // "A", "C", "D", "E" should be gone.
+        assertThat(items.get(1).getIdentityKey(), is("F"));
+        assertThat(items.get(2).getIdentityKey(), is("G"));
+        assertThat(items.get(3).getIdentityKey(), is("H"));
 
         assertThat(listListener.itemsRangeRemoved.size(), is(4));
 
@@ -66,18 +70,34 @@ public class DuelCollectionTests {
         }, TestItem.class);
 
         assertThat(items.size(), is(2));
+        assertThat(items.get(0).getIdentityKey(), is("B"));
+        assertThat(items.get(1).getIdentityKey(), is("G"));
 
         assertThat(listListener.itemsRangeRemoved.size(), is(6));
 
         items.applyFilter(null, OrderTestItem.class);
 
         assertThat(items.size(), is(6));
+        assertThat(items.get(0).getIdentityKey(), is("A"));
+        assertThat(items.get(1).getIdentityKey(), is("B"));
+        assertThat(items.get(2).getIdentityKey(), is("C"));
+        assertThat(items.get(3).getIdentityKey(), is("D"));
+        assertThat(items.get(4).getIdentityKey(), is("E"));
+        assertThat(items.get(5).getIdentityKey(), is("G"));
 
         assertThat(listListener.itemsRangeInserted.size(), is(4));
 
         items.applyFilter(null, TestItem.class);
 
         assertThat(items.size(), is(8));
+        assertThat(items.get(0).getIdentityKey(), is("A"));
+        assertThat(items.get(1).getIdentityKey(), is("B"));
+        assertThat(items.get(2).getIdentityKey(), is("C"));
+        assertThat(items.get(3).getIdentityKey(), is("D"));
+        assertThat(items.get(4).getIdentityKey(), is("E"));
+        assertThat(items.get(5).getIdentityKey(), is("F"));
+        assertThat(items.get(6).getIdentityKey(), is("G"));
+        assertThat(items.get(7).getIdentityKey(), is("H"));
 
         assertThat(listListener.itemsRangeInserted.size(), is(6));
     }
@@ -101,7 +121,7 @@ public class DuelCollectionTests {
         deepItems.add(new AdapterItem<>(new TestItem("G")));
         deepItems.add(new AdapterItem<>(new TestItem("H")));
 
-        group = new AdapterItemGroup<>(new OrderTestItem("B", 0));
+        group = new AdapterItemGroup<>(new OrderTestItem("B", 1));
         group.addOrUpdateItems(deepItems);
         items.addOrUpdate(group);
 
@@ -110,7 +130,7 @@ public class DuelCollectionTests {
         deepItems.add(new AdapterItem<>(new TestItem("G")));
         deepItems.add(new AdapterItem<>(new TestItem("H")));
 
-        group = new AdapterItemGroup<>(new OrderTestItem("C", 0));
+        group = new AdapterItemGroup<>(new OrderTestItem("C", 2));
         group.addOrUpdateItems(deepItems);
         items.addOrUpdate(group);
 
@@ -119,7 +139,7 @@ public class DuelCollectionTests {
         deepItems.add(new AdapterItem<>(new TestItem("G")));
         deepItems.add(new AdapterItem<>(new TestItem("H")));
 
-        group = new AdapterItemGroup<>(new OrderTestItem("D", 0));
+        group = new AdapterItemGroup<>(new OrderTestItem("D", 3));
         group.addOrUpdateItems(deepItems);
         items.addOrUpdate(group);
 
@@ -128,7 +148,7 @@ public class DuelCollectionTests {
         deepItems.add(new AdapterItem<>(new TestItem("G")));
         deepItems.add(new AdapterItem<>(new TestItem("H")));
 
-        group = new AdapterItemGroup<>(new OrderTestItem("E", 0));
+        group = new AdapterItemGroup<>(new OrderTestItem("E", 4));
         group.addOrUpdateItems(deepItems);
         items.addOrUpdate(group);
 
@@ -142,10 +162,17 @@ public class DuelCollectionTests {
         }, TestItem.class);
 
         assertThat(items.size(), is(10));
+        assertThat(items.get(0).getIdentityKey(), is("A"));
+        assertThat(items.get(1).getIdentityKey(), is("G"));
 
         items.applyFilter(null, TestItem.class);
 
         assertThat(items.size(), is(20));
+        assertThat(items.get(0).getIdentityKey(), is("A"));
+        assertThat(items.get(1).getIdentityKey(), is("F"));
+        assertThat(items.get(2).getIdentityKey(), is("G"));
+        assertThat(items.get(3).getIdentityKey(), is("H"));
+        assertThat(items.get(4).getIdentityKey(), is("B"));
 
         items.applyFilter(new Filter<OrderTestItem>() {
             @Override
@@ -155,10 +182,19 @@ public class DuelCollectionTests {
         }, OrderTestItem.class);
 
         assertThat(items.size(), is(4));
+        assertThat(items.get(0).getIdentityKey(), is("B"));
+        assertThat(items.get(1).getIdentityKey(), is("F"));
+        assertThat(items.get(2).getIdentityKey(), is("G"));
+        assertThat(items.get(3).getIdentityKey(), is("H"));
 
         items.applyFilter(null, OrderTestItem.class);
 
         assertThat(items.size(), is(20));
+        assertThat(items.get(0).getIdentityKey(), is("A"));
+        assertThat(items.get(1).getIdentityKey(), is("F"));
+        assertThat(items.get(2).getIdentityKey(), is("G"));
+        assertThat(items.get(3).getIdentityKey(), is("H"));
+        assertThat(items.get(4).getIdentityKey(), is("B"));
     }
 
     @Test

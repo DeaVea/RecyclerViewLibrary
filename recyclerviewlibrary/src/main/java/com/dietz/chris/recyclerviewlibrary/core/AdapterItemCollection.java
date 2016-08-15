@@ -184,9 +184,7 @@ class AdapterItemCollection {
         int max = mList.size();
         for (int i = 0; i < max; i++) {
             AdapterItem item = mList.get(i);
-            if (remaining == 0) {
-                return (K) item;
-            } else if (remaining < item.getItemCount()){
+            if (remaining < item.getItemCount()) {
                 return (K) item.getItem(remaining);
             }
             remaining -= item.getItemCount();
