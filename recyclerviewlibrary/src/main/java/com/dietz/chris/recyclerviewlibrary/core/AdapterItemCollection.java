@@ -45,10 +45,11 @@ class AdapterItemCollection {
 
     /**
      * Apply a filter to only show the items that are in this.
+     *
      * @param filter
-     *      Filter to apply.
+     *         Filter to apply.
      * @param classType
-     *      Type of object this is filtering out.
+     *         Type of object this is filtering out.
      */
     public <K extends RecyclerItem> void applyFilter(Filter<K> filter, Class<K> classType) {
         for (AdapterItem item : mList) {
@@ -70,10 +71,11 @@ class AdapterItemCollection {
 
     /**
      * Finds the first item with the given payload.
+     *
      * @param payload
-     *      Payload item to check
-     * @return
-     *      First item found that has the payload or null if it does not.
+     *         Payload item to check
+     *
+     * @return First item found that has the payload or null if it does not.
      */
     public <K extends RecyclerItem> AdapterItem findItemWithPayload(K payload) {
         AdapterItem returnItem;
@@ -87,10 +89,11 @@ class AdapterItemCollection {
 
     /**
      * Finds the first item with the given key or null if it is not found.
+     *
      * @param key
-     *      Key to search for.
-     * @return
-     *      AdapterItem found with the given key or null if it is not in the list.
+     *         Key to search for.
+     *
+     * @return AdapterItem found with the given key or null if it is not in the list.
      */
     public AdapterItem findItemWithKey(String key) {
         AdapterItem returnItem = mList.get(key);
@@ -106,10 +109,11 @@ class AdapterItemCollection {
 
     /**
      * Finds all the items that are in this list that contains the payload and removes it.
+     *
      * @param payload
-     *      payload item to look for.
-     * @return
-     *      Number of items that were removed.
+     *         payload item to look for.
+     *
+     * @return Number of items that were removed.
      */
     public <K extends RecyclerItem> int removeItemWithPayload(K payload) {
         int removedItems = 0;
@@ -131,10 +135,11 @@ class AdapterItemCollection {
 
     /**
      * Returns true if the collection contains the given item.
+     *
      * @param item
-     *      Item to check.
-     * @return
-     *      True if the item is in the collection or false otherwise.
+     *         Item to check.
+     *
+     * @return True if the item is in the collection or false otherwise.
      */
     public boolean contains(AdapterItem item) {
         if (mList.contains(item)) {
@@ -150,8 +155,8 @@ class AdapterItemCollection {
 
     /**
      * Current size of the collection.
-     * @return
-     *      Current size of the entire collection.
+     *
+     * @return Current size of the entire collection.
      */
     public int size() {
         return mFullSize;
@@ -170,10 +175,11 @@ class AdapterItemCollection {
 
     /**
      * Gets the item at the given position.
+     *
      * @param position
-     *      Position to retrieve the item.
-     * @return
-     *      Item contained at the given position.
+     *         Position to retrieve the item.
+     *
+     * @return Item contained at the given position.
      */
     // If the returning call is not the right type, then something went wrong anyway so it should throw an exception.
     @SuppressWarnings("unchecked")
@@ -193,10 +199,11 @@ class AdapterItemCollection {
     /**
      * Removes the item passed in.  This will remove the item that has the underlying identifying AdapterItem key,
      * so if the data structure is different then it will still be removed.
+     *
      * @param item
-     *      Item to remove
-     * @return
-     *      True if the item was removed or false otherwise.
+     *         Item to remove
+     *
+     * @return True if the item was removed or false otherwise.
      */
     public boolean remove(@NonNull AdapterItem item) {
         return removeItemFromHere(item) | removeItemFromCollection(item);
@@ -204,10 +211,11 @@ class AdapterItemCollection {
 
     /**
      * Add an item or update it if it is already in the collection.
+     *
      * @param item
-     *      Item to update.
-     * @return
-     *      New position of the item.
+     *         Item to update.
+     *
+     * @return New position of the item.
      */
     public int addOrUpdate(@NonNull AdapterItem item) {
         int position;
@@ -222,15 +230,15 @@ class AdapterItemCollection {
     /**
      * Retrieves all the adapter items in this collection that are contained within this collection.
      * This will be determined based off their identity key.
-     *
+     * <p/>
      * This will only return the items that are contained in this collection.  If the items are not
      * in this collection then they will be left out, so it's possible the returned collection will
      * be less than the size of the items given.
      *
      * @param items
-     *      Payloads to retrieve in this collection.
-     * @return
-     *      All the items that are in this collection that
+     *         Payloads to retrieve in this collection.
+     *
+     * @return All the items that are in this collection that
      */
     /* internal */ Collection<AdapterItem> getItemsWithPayloads(Collection<? extends RecyclerItem> items) {
         HashSet<AdapterItem> returnItems = new HashSet<>(items.size());
@@ -246,14 +254,14 @@ class AdapterItemCollection {
     /**
      * Retrieve all the adapter items in this collection that are not contained within this collection.
      * This will be determined based off their identity key.
-     *
+     * <p/>
      * This will only return the items that are contained in this collection which do not have the payloads
      * provided.
      *
      * @param items
-     *      Payloads to exclude from the collection.
-     * @return
-     *      All the items that don't have this provided payloads.
+     *         Payloads to exclude from the collection.
+     *
+     * @return All the items that don't have this provided payloads.
      */
     /* internal */ Collection<AdapterItem> getItemsExcludingPayloads(Collection<? extends RecyclerItem> items) {
         HashSet<String> keys = new HashSet<>(items.size());
@@ -272,10 +280,11 @@ class AdapterItemCollection {
 
     /**
      * Removes a collection of items from the internal list.
+     *
      * @param items
-     *      Items to remove.
-     * @return
-     *      Number of items that were actaully removed.
+     *         Items to remove.
+     *
+     * @return Number of items that were actaully removed.
      */
     private int removeItemsFromHere(Collection<AdapterItem> items) {
         int itemsRemoved = 0;
@@ -288,8 +297,9 @@ class AdapterItemCollection {
 
     /**
      * Remove an item that's contained in this collection.
+     *
      * @param item
-     *      Item to remove.  It must be in this collection.
+     *         Item to remove.  It must be in this collection.
      */
     private boolean removeItemFromHere(AdapterItem item) {
         final int index = mList.indexOf(item);
@@ -313,8 +323,9 @@ class AdapterItemCollection {
 
     /**
      * Remove an item that's contained in other items.
+     *
      * @param item
-     *      Item to remove.  Does not have to be in this collection itself.
+     *         Item to remove.  Does not have to be in this collection itself.
      */
     private boolean removeItemFromCollection(AdapterItem item) {
         boolean removed = false;
@@ -326,10 +337,11 @@ class AdapterItemCollection {
 
     /**
      * Updates an item that is in the collection that contains the same identity key as the one provided.
+     *
      * @param item
-     *      Item to update.
-     * @return
-     *      New position of the item in the entire list.
+     *         Item to update.
+     *
+     * @return New position of the item in the entire list.
      */
     private int updateInternal(AdapterItem item) {
         AdapterItem oldItem = mList.getReal(item);
@@ -359,10 +371,11 @@ class AdapterItemCollection {
 
     /**
      * Adds an item in the current list.  This does not check if the key already exists.  It just assumes it does not.
+     *
      * @param item
-     *      Item to add
-     * @return
-     *      New position in the overall list that contains the item.
+     *         Item to add
+     *
+     * @return New position in the overall list that contains the item.
      */
     private int addInternal(AdapterItem item) {
         item.bindList(mItemListener);
@@ -418,8 +431,10 @@ class AdapterItemCollection {
 
         @Override
         public void itemChanged(@NonNull AdapterItem item) {
-            int realIndex = Utils.getPosition(item, mList);
-            mListener.onItemChanged(realIndex, item);
+            if (!item.isHidden()) {
+                int realIndex = Utils.getPosition(item, mList);
+                onItemChanged(realIndex, item);
+            }
         }
 
         @Override
@@ -427,10 +442,18 @@ class AdapterItemCollection {
             int realIndex = Utils.getPosition(item, mList);
             if (isVisible) {
                 mFullSize += itemsCount;
-                onItemRangeInserted(realIndex, itemsCount);
+                if (itemsCount > 1) {
+                    onItemRangeInserted(realIndex, itemsCount);
+                } else {
+                    onItemInserted(realIndex, item);
+                }
             } else {
                 mFullSize -= itemsCount;
-                onItemRangeRemoved(realIndex, itemsCount);
+                if (itemsCount > 1) {
+                    onItemRangeRemoved(realIndex, itemsCount);
+                } else {
+                    onItemRemoved(realIndex, item);
+                }
             }
         }
 

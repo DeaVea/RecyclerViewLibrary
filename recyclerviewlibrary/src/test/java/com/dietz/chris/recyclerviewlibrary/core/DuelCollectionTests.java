@@ -25,6 +25,7 @@ import java.util.Collection;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.hamcrest.CoreMatchers.is;
+import static org.hamcrest.CoreMatchers.sameInstance;
 import static org.hamcrest.MatcherAssert.assertThat;
 
 /**
@@ -60,7 +61,7 @@ public class DuelCollectionTests {
         assertThat(items.get(2).getIdentityKey(), is("G"));
         assertThat(items.get(3).getIdentityKey(), is("H"));
 
-        assertThat(listListener.itemsRangeRemoved.size(), is(4));
+        assertThat(listListener.itemsRemoved.size(), is(4));
 
         items.applyFilter(new Filter<TestItem>() {
             @Override
@@ -73,7 +74,7 @@ public class DuelCollectionTests {
         assertThat(items.get(0).getIdentityKey(), is("B"));
         assertThat(items.get(1).getIdentityKey(), is("G"));
 
-        assertThat(listListener.itemsRangeRemoved.size(), is(6));
+        assertThat(listListener.itemsRemoved.size(), is(6));
 
         items.applyFilter(null, OrderTestItem.class);
 
@@ -85,7 +86,7 @@ public class DuelCollectionTests {
         assertThat(items.get(4).getIdentityKey(), is("E"));
         assertThat(items.get(5).getIdentityKey(), is("G"));
 
-        assertThat(listListener.itemsRangeInserted.size(), is(4));
+        assertThat(listListener.itemsPosInserted.size(), is(12)); // Includes the 8 original inserted.
 
         items.applyFilter(null, TestItem.class);
 
@@ -99,7 +100,7 @@ public class DuelCollectionTests {
         assertThat(items.get(6).getIdentityKey(), is("G"));
         assertThat(items.get(7).getIdentityKey(), is("H"));
 
-        assertThat(listListener.itemsRangeInserted.size(), is(6));
+        assertThat(listListener.itemsPosInserted.size(), is(14));
     }
 
     @Test
@@ -165,6 +166,8 @@ public class DuelCollectionTests {
         assertThat(items.get(0).getIdentityKey(), is("A"));
         assertThat(items.get(1).getIdentityKey(), is("G"));
 
+        assertThat(listListener.itemsRemoved.size(), is(10));
+
         items.applyFilter(null, TestItem.class);
 
         assertThat(items.size(), is(20));
@@ -173,6 +176,9 @@ public class DuelCollectionTests {
         assertThat(items.get(2).getIdentityKey(), is("G"));
         assertThat(items.get(3).getIdentityKey(), is("H"));
         assertThat(items.get(4).getIdentityKey(), is("B"));
+
+        assertThat(listListener.itemsPosInserted.size(), is(15)); // Includes the original 5 from the beginning.
+        assertThat(listListener.itemsRemoved.size(), is(10));
 
         items.applyFilter(new Filter<OrderTestItem>() {
             @Override
@@ -187,6 +193,10 @@ public class DuelCollectionTests {
         assertThat(items.get(2).getIdentityKey(), is("G"));
         assertThat(items.get(3).getIdentityKey(), is("H"));
 
+        assertThat(listListener.itemsPosInserted.size(), is(15)); // Includes the original 5 from the beginning.
+        assertThat(listListener.itemsRemoved.size(), is(10));
+        assertThat(listListener.itemsRangeRemoved.size(), is(4));
+
         items.applyFilter(null, OrderTestItem.class);
 
         assertThat(items.size(), is(20));
@@ -195,6 +205,11 @@ public class DuelCollectionTests {
         assertThat(items.get(2).getIdentityKey(), is("G"));
         assertThat(items.get(3).getIdentityKey(), is("H"));
         assertThat(items.get(4).getIdentityKey(), is("B"));
+
+        assertThat(listListener.itemsPosInserted.size(), is(15)); // Includes the original 5 from the beginning.
+        assertThat(listListener.itemsRangeInserted.size(), is(4));
+        assertThat(listListener.itemsRemoved.size(), is(10));
+        assertThat(listListener.itemsRangeRemoved.size(), is(4));
     }
 
     @Test
@@ -416,5 +431,23 @@ public class DuelCollectionTests {
         assertThat(items.removeItemWithPayload(groupPayload3), equalTo(3));
         assertThat(items.removeItemWithPayload(groupPayload1), equalTo(2));
         assertThat(items.removeItemWithPayload(groupPayload2), equalTo(2));
+    }
+
+    @Test
+    public void chaneWhileHidden() {
+        AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
+
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+        items.addOrUpdate(item);
+
+        item.hide();
+
+        assertThat(listListener.itemsRemoved.size(), is(1));
+        assertThat((AdapterItem<OrderTestItem>) listListener.itemsRemoved.get(0).item, is(sameInstance(item)));
+
+        item.setPayload(new OrderTestItem("B", 1));
+
+        assertThat(listListener.itemsPosChanged.size(), is(0));
     }
 }
