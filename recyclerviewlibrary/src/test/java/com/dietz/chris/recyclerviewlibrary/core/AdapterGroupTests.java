@@ -174,6 +174,8 @@ public class AdapterGroupTests {
         }, OrderTestItem.class);
 
         assertThat(group.getItemCount(), is(2));
+        assertThat(group.getItem(0).getIdentityKey(), is("Group 0"));
+        assertThat(group.getItem(1).getIdentityKey(), is("Item 1"));
 
         group.filter(new Filter<TestItem>() {
             @Override
@@ -193,6 +195,13 @@ public class AdapterGroupTests {
         group.filter(null, TestItem.class);
         assertThat(group.getItemCount(), is(6));
         assertThat(group.isHidden(), is(false));
+
+        assertThat(group.getItem(0).getIdentityKey(), is("Group 0"));
+        assertThat(group.getItem(1).getIdentityKey(), is("Item 0"));
+        assertThat(group.getItem(2).getIdentityKey(), is("Item 1"));
+        assertThat(group.getItem(3).getIdentityKey(), is("Item 2"));
+        assertThat(group.getItem(4).getIdentityKey(), is("Item 3"));
+        assertThat(group.getItem(5).getIdentityKey(), is("Item 4"));
     }
 
     @Test
