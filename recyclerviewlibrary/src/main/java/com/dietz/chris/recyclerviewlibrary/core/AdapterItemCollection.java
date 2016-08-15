@@ -26,7 +26,6 @@ import java.util.HashSet;
  *
  */
 class AdapterItemCollection {
-
     private final HashArrayList<AdapterItem> mList;
     private final ListListener mListener;
     private final InternalItemListener mItemListener;
@@ -52,8 +51,7 @@ class AdapterItemCollection {
      *      Type of object this is filtering out.
      */
     public <K extends RecyclerItem> void applyFilter(Filter<K> filter, Class<K> classType) {
-        Collection<AdapterItem<K>> items = getItemsWithPayloadType(classType);
-        for (AdapterItem<K> item : items) {
+        for (AdapterItem item : mList) {
             item.filter(filter, classType);
         }
     }
@@ -219,15 +217,6 @@ class AdapterItemCollection {
             position = addInternal(item);
         }
         return position;
-    }
-
-    /* internal */ <T extends RecyclerItem> Collection<AdapterItem<T>> getItemsWithPayloadType(Class<T> cls) {
-        HashSet<AdapterItem<T>> returnItems = new HashSet<>();
-        for (AdapterItem item : mList) {
-            //noinspection unchecked If the contract holds up then we'll work.
-            returnItems.addAll(item.getItemsOfType(cls));
-        }
-        return returnItems;
     }
 
     /**
@@ -425,8 +414,6 @@ class AdapterItemCollection {
         }
     }
 
-    // All items in this list will be of type "K".  No need to validate it.
-    @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
     private class InternalItemListener implements AdapterListener {
 
         @Override
@@ -438,13 +425,12 @@ class AdapterItemCollection {
         @Override
         public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int itemsCount) {
             int realIndex = Utils.getPosition(item, mList);
-            int count = itemsCount;
             if (isVisible) {
-                mFullSize += count;
-                onItemRangeInserted(realIndex, count);
+                mFullSize += itemsCount;
+                onItemRangeInserted(realIndex, itemsCount);
             } else {
-                mFullSize -= count;
-                onItemRangeRemoved(realIndex, count);
+                mFullSize -= itemsCount;
+                onItemRangeRemoved(realIndex, itemsCount);
             }
         }
 
@@ -475,10 +461,6 @@ class AdapterItemCollection {
             int realIndex = Utils.getPosition(container, mList) + fromPosition + 1;
             onItemRangeRemoved(realIndex, size);
         }
-    }
-
-    private static boolean equals(AdapterItem item, AdapterItem item2) {
-        return item.getIdentityKey().equals(item2.getIdentityKey()) && item.hashCode() == item2.hashCode() && item.equals(item2);
     }
 
     private static void unregisterAllListener(Collection<? extends AdapterItem> items) {

@@ -14,11 +14,11 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import android.support.annotation.NonNull;
+
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 /**
  * AdapterItemGroup is an AdapterItem that handles multiple AdapterItems.
@@ -48,7 +48,7 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     }
 
     @Override
-    public final <H extends RecyclerItem> int removeItemWithPayload(H payload){
+    public final <H extends RecyclerItem> int removeItemWithPayload(H payload) {
         return mItems.removeItemWithPayload(payload);
     }
 
@@ -110,10 +110,9 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     }
 
     @Override
-    public <T extends RecyclerItem> Collection<AdapterItem<T>> getItemsOfType(Class<T> cls) {
-        final Collection<AdapterItem<T>> items = super.getItemsOfType(cls);
-        items.addAll(mItems.getItemsWithPayloadType(cls));
-        return items;
+    public <T extends RecyclerItem> void filter(Filter<T> filter, @NonNull Class<T> ofClass) {
+        super.filter(filter, ofClass);
+        mItems.applyFilter(filter, ofClass);
     }
 
     protected final void notifyItemsAdded(int startingAt, int size) {

@@ -198,34 +198,6 @@ public class DuelCollectionTests {
     }
 
     @Test
-    public void getItemsWithPayloadType() {
-        TestAdapterListListener listListener = new TestAdapterListListener();
-        final AdapterItemCollection items = new AdapterItemCollection(listListener);
-
-        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
-        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
-        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
-        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
-        items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
-
-        Collection<AdapterItem<OrderTestItem>> orderedItems = items.getItemsWithPayloadType(OrderTestItem.class);
-        assertThat(orderedItems.size(), is(5));
-
-        Collection<AdapterItem<TestItem>> regularItems = items.getItemsWithPayloadType(TestItem.class);
-        assertThat(regularItems.isEmpty(), is(true));
-
-        items.addOrUpdate(new AdapterItem<>(new TestItem("F")));
-        items.addOrUpdate(new AdapterItem<>(new TestItem("G")));
-        items.addOrUpdate(new AdapterItem<>(new TestItem("H")));
-
-        orderedItems = items.getItemsWithPayloadType(OrderTestItem.class);
-        assertThat(orderedItems.size(), is(5));
-
-        regularItems = items.getItemsWithPayloadType(TestItem.class);
-        assertThat(regularItems.size(), is(3));
-    }
-
-    @Test
     public void addAndSizeTests() {
         TestAdapterListListener listListener = new TestAdapterListListener();
         final AdapterItemCollection items = new AdapterItemCollection(listListener);

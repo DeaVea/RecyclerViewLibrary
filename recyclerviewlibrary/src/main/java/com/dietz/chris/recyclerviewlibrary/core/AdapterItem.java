@@ -14,6 +14,7 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -21,6 +22,7 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -57,17 +59,18 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      * @param filter
      *      The filter to apply or null.
      */
-    public <T extends RecyclerItem> void filter(Filter<T> filter, Class<T> ofClass) {
-        Collection<AdapterItem<T>> items = getItemsOfType(ofClass);
-        for (AdapterItem<T> item : items) {
-            item.applyFilter(filter);
+    @CallSuper
+    public <T extends RecyclerItem> void filter(@Nullable  Filter<T> filter, @NonNull Class<T> ofClass) {
+        if (mPayload.getClass().equals(ofClass)) {
+            //noinspection unchecked We've just verified that the filter will be of the same type.
+            applyFilter((Filter<K>) filter);
         }
     }
 
     /**
      * Internal implementation of filter.  Call this when we've proven that the class is correct.
      */
-    /* internal */ void applyFilter(Filter<K> filter) {
+    /* internal */ void applyFilter(@Nullable Filter<K> filter) {
         int count = getItemCount();
         mMyFilter = filter;
         boolean filteredOpen = filteredOpen();
@@ -202,25 +205,6 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      */
     <H extends RecyclerItem> int removeItemWithPayload(H payload) {
         return 0;
-    }
-
-    /**
-     * Returns all the items contained in this collection with payloads of type "T".
-     *
-     * @param cls
-     *      The class type to return.
-     * @param <T>
-     *      The actual class.
-     * @return
-     *      Collection of all items in this payload that are of type T including this one (if it is of type T of course).
-     */
-    public <T extends RecyclerItem> Collection<AdapterItem<T>> getItemsOfType(Class<T> cls) {
-        final List<AdapterItem<T>> list = new ArrayList<>(1 + getItemCount());
-        if (mPayload != null && mPayload.getClass().equals(cls)) {
-            //noinspection unchecked // We just verified that it's true.  Lint can forget it.
-            list.add((AdapterItem<T>) this);
-        }
-        return list;
     }
 
     /**

@@ -164,17 +164,4 @@ public class AdapterItemTests {
         assertThat(item.filteredOpen(), is(true));
         assertThat(item.getItemCount(), is(1));
     }
-
-    @Test
-    public void testGetItemsOfClass() {
-        final AdapterItem<TestItem> item = new AdapterItem<>(new TestItem("TestItem1"));
-
-        Collection<AdapterItem<TestItem>> getItems = item.getItemsOfType(TestItem.class);
-        assertThat(getItems.size(), is(1));
-        assertThat(getItems.iterator().next(), is(item));
-
-        Collection<AdapterItem<OrderTestItem>> newItems = item.getItemsOfType(OrderTestItem.class);
-        assertThat(newItems.isEmpty(), is(true));
-
-    }
 }
