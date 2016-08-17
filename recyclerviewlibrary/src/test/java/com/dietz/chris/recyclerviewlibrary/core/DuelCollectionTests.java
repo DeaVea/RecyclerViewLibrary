@@ -450,4 +450,47 @@ public class DuelCollectionTests {
 
         assertThat(listListener.itemsPosChanged.size(), is(1));
     }
+
+    @Test
+    public void applyFilterAfterAdd() {
+        AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
+
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+        items.applyFilter(new Filter<RecyclerItem>() {
+            @Override
+            public boolean accept(RecyclerItem value) {
+                return false;
+            }
+        }, RecyclerItem.class);
+
+        items.addOrUpdate(item);
+
+        assertThat(item.filteredOpen(), is(false));
+        assertThat(items.size(), is(0));
+    }
+
+    @Test
+    public void applyFilterAfterUpdate() {
+        AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
+
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+        items.addOrUpdate(item);
+
+        items.applyFilter(new Filter<RecyclerItem>() {
+            @Override
+            public boolean accept(RecyclerItem value) {
+                return value.getIdentityKey().equals("A");
+            }
+        }, RecyclerItem.class);
+
+        assertThat(item.filteredOpen(), is(true));
+        assertThat(items.size(), is(1));
+
+        item.setPayload(new OrderTestItem("B", 1));
+
+        assertThat(item.filteredOpen(), is(false));
+        assertThat(items.size(), is(0));
+    }
 }
