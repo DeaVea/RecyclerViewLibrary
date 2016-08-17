@@ -428,7 +428,7 @@ public class DuelCollectionTests {
     }
 
     @Test
-    public void chaneWhileHidden() {
+    public void changeWhileHidden() {
         AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
 
         TestAdapterListListener listListener = new TestAdapterListListener();
