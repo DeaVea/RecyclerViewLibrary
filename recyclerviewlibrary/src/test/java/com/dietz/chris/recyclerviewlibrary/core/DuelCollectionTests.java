@@ -443,5 +443,11 @@ public class DuelCollectionTests {
         item.setPayload(new OrderTestItem("B", 1));
 
         assertThat(listListener.itemsPosChanged.size(), is(0));
+
+        item.reveal();
+
+        item.setPayload(new OrderTestItem("C", 2));
+
+        assertThat(listListener.itemsPosChanged.size(), is(1));
     }
 }
