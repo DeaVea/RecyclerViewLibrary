@@ -61,7 +61,7 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
      */
     @CallSuper
     public <T extends RecyclerItem> void filter(@Nullable  Filter<T> filter, @NonNull Class<T> ofClass) {
-        if (mPayload.getClass().equals(ofClass)) {
+        if (ofClass.isInstance(mPayload)) {
             //noinspection unchecked We've just verified that the filter will be of the same type.
             applyFilter((Filter<K>) filter);
         }
