@@ -196,6 +196,10 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
         return payload != null && mPayload.getIdentityKey().equals(payload.getIdentityKey());
     }
 
+    Filter<K> getFilter() {
+        return mMyFilter;
+    }
+
     /**
      * If this is a group, this will remove the item that contains the payload from the group.
      * @param payload

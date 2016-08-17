@@ -471,6 +471,32 @@ public class DuelCollectionTests {
     }
 
     @Test
+    public void applyFilterWhileUpdate() {
+        AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
+
+        TestAdapterListListener listListener = new TestAdapterListListener();
+        final AdapterItemCollection items = new AdapterItemCollection(listListener);
+        items.addOrUpdate(item);
+
+        items.applyFilter(new Filter<RecyclerItem>() {
+            @Override
+            public boolean accept(RecyclerItem value) {
+                return false;
+            }
+        }, RecyclerItem.class);
+
+        assertThat(item.filteredOpen(), is(false));
+        assertThat(items.size(), is(0));
+
+        AdapterItem<OrderTestItem> sameItem = new AdapterItem<>(new OrderTestItem("A", 0));
+
+        items.addOrUpdate(sameItem);
+
+        assertThat(sameItem.filteredOpen(), is(false));
+        assertThat(items.size(), is(0));
+    }
+
+    @Test
     public void applyFilterAfterUpdate() {
         AdapterItem<OrderTestItem> item = new AdapterItem<>(new OrderTestItem("A", 0));
 

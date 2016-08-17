@@ -347,6 +347,8 @@ class AdapterItemCollection {
         AdapterItem oldItem = mList.getReal(item);
         oldItem.unbindListener();
 
+        item.applyFilter(oldItem.getFilter());
+
         item.bindList(mItemListener);
 
         int oldPositionInMyList = mList.indexOf(oldItem);
@@ -358,6 +360,10 @@ class AdapterItemCollection {
         int newPositionInOverallList = Utils.adjustPositionForItems(newPositionInMyList, mList);
 
         mList.safeAdd(newPositionInMyList, item);
+
+        if (item.isHidden()) {
+            return newPositionInMyList;
+        }
 
         mFullSize += item.getItemCount() - oldItem.getItemCount();
 
