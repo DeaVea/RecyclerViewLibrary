@@ -362,7 +362,10 @@ class AdapterItemCollection {
         mFullSize += item.getItemCount() - oldItem.getItemCount();
 
         if (newPositionInOverallList == oldPositionInOverallList) {
-            onItemChanged(newPositionInMyList, item);
+            // The item's only changed if the payloads changed.
+            if (!Utils.itemsEqual(item.getPayload(), oldItem.getPayload())) {
+                onItemChanged(newPositionInMyList, item);
+            }
         } else {
             onItemMoved(oldPositionInOverallList, newPositionInOverallList, item);
         }

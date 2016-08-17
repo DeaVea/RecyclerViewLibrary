@@ -45,7 +45,7 @@ public class AdapterListTests {
         assertThat(list.size(), is(3));
 
         assertThat(listener.itemsPosInserted.size(), is(6));
-        assertThat(listener.itemsPosChanged.size(), is(3));
+        assertThat(listener.itemsPosChanged.size(), is(0));
         assertThat(listener.itemsRemoved.size(), is(3));
     }
 }

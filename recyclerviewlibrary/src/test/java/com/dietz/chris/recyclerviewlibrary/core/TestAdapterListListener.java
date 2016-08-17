@@ -38,7 +38,7 @@ public class TestAdapterListListener implements ListListener {
     }
 
     public MoveObj lastItemMoved() {
-        return (itemsPosChanged.isEmpty()) ? null : itemsMoved.get(itemsMoved.size() - 1);
+        return (itemsMoved.isEmpty()) ? null : itemsMoved.get(itemsMoved.size() - 1);
     }
 
     public RangeRemovedObj lastItemRangeRemoved() {

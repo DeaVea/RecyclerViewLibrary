@@ -36,7 +36,7 @@ public class TestAdapterItemListener implements AdapterListener {
     }
 
     @Override
-    public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible) {
+    public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int count) {
         mVisibilityChangeItems.add(new VisibilityChange(isVisible, item));
     }
 

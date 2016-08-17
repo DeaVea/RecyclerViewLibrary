@@ -259,35 +259,29 @@ public class DuelCollectionTests {
 
         int position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 0)));
         assertThat(position, equalTo(0));
-        assertThat(listListener.itemsPosChanged.size(), equalTo(1));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(0));
+        assertThat(listListener.itemsPosChanged.size(), equalTo(0));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 1)));
         assertThat(position, equalTo(1));
-        assertThat(listListener.itemsPosChanged.size(), equalTo(2));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(1));
+        assertThat(listListener.itemsPosChanged.size(), equalTo(0));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("C", 2)));
         assertThat(position, equalTo(2));
-        assertThat(listListener.itemsPosChanged.size(), equalTo(3));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(2));
+        assertThat(listListener.itemsPosChanged.size(), equalTo(0));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("D", 3)));
         assertThat(position, equalTo(3));
-        assertThat(listListener.itemsPosChanged.size(), equalTo(4));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(3));
+        assertThat(listListener.itemsPosChanged.size(), equalTo(0));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("E", 4)));
         assertThat(position, equalTo(4));
-        assertThat(listListener.itemsPosChanged.size(), equalTo(5));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(4));
+        assertThat(listListener.itemsPosChanged.size(), equalTo(0));
 
         assertThat(items.size(), equalTo(5));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("A", 1)));
         assertThat(position, equalTo(0));
         assertThat(listListener.itemsMoved.size(), equalTo(0));
-        assertThat(listListener.lastItemPositionChanged(), equalTo(0));
 
         position = items.addOrUpdate(new AdapterItem<>(new OrderTestItem("B", 0)));
         assertThat(position, equalTo(0));
