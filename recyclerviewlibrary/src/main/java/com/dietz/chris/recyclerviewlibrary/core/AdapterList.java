@@ -37,6 +37,10 @@ public class AdapterList {
         mListListener.setInternalListener(listListener);
     }
 
+    public <K extends RecyclerItem> void filter(Filter<K> filter, Class<K> kClass) {
+        mMainList.applyFilter(filter, kClass);
+    }
+
     public <K extends RecyclerItem> void addItem(K item) {
         mMainList.addOrUpdate(new AdapterItemGroup<>(item));
     }

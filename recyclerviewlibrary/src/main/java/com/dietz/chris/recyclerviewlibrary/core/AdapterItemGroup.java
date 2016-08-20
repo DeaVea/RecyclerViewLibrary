@@ -14,6 +14,8 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import android.support.annotation.NonNull;
+
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 import java.util.Collection;
@@ -46,13 +48,18 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     }
 
     @Override
-    public final <H extends RecyclerItem> int removeItemWithPayload(H payload){
+    public final <H extends RecyclerItem> int removeItemWithPayload(H payload) {
         return mItems.removeItemWithPayload(payload);
     }
 
     @Override
     public final int getItemCount() {
-        return (isOpen()) ? 1 + mItems.size() :  1;
+        int baseCount = super.getItemCount();
+        if (baseCount > 0) {
+            return (isOpen()) ? baseCount + mItems.size() : baseCount;
+        } else {
+            return baseCount;
+        }
     }
 
     @Override
@@ -100,6 +107,12 @@ public class AdapterItemGroup<K extends RecyclerItem> extends AdapterItem<K> {
     @Override
     public final boolean containsItem(AdapterItem item) {
         return mItems.contains(item);
+    }
+
+    @Override
+    public <T extends RecyclerItem> void filter(Filter<T> filter, @NonNull Class<T> ofClass) {
+        super.filter(filter, ofClass);
+        mItems.applyFilter(filter, ofClass);
     }
 
     protected final void notifyItemsAdded(int startingAt, int size) {

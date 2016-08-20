@@ -154,4 +154,53 @@ public class AdapterGroupTests {
             assertThat("Item at " + i + " does not have the correct order. Expected: " + i + "; actual: " + item.getOrder(), item.getOrder(), is(equalTo(i)));
         }
     }
+
+    @Test
+    public void testFilter() {
+        final AdapterItemGroup group = new AdapterItemGroup<>(new TestItem("Group 0"));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 0", 1)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 1", 3)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 2", 5)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 3", 7)));
+        group.addOrUpdateItem(new AdapterItem<>(new OrderTestItem("Item 4", 9)));
+
+        assertThat(group.getItemCount(), is(6));
+
+        group.filter(new Filter<OrderTestItem>() {
+            @Override
+            public boolean accept(OrderTestItem value) {
+                return value.getIdentityKey().contains("1");
+            }
+        }, OrderTestItem.class);
+
+        assertThat(group.getItemCount(), is(2));
+        assertThat(group.getItem(0).getIdentityKey(), is("Group 0"));
+        assertThat(group.getItem(1).getIdentityKey(), is("Item 1"));
+
+        group.filter(new Filter<TestItem>() {
+            @Override
+            public boolean accept(TestItem value) {
+                return !value.getIdentityKey().contains("0");
+            }
+        }, TestItem.class);
+
+        assertThat(group.getItemCount(), is(0));
+        assertThat(group.isHidden(), is(true));
+
+        group.filter(null, OrderTestItem.class);
+
+        assertThat(group.getItemCount(), is(0)); // Full group is still hidden.
+        assertThat(group.isHidden(), is(true));
+
+        group.filter(null, TestItem.class);
+        assertThat(group.getItemCount(), is(6));
+        assertThat(group.isHidden(), is(false));
+
+        assertThat(group.getItem(0).getIdentityKey(), is("Group 0"));
+        assertThat(group.getItem(1).getIdentityKey(), is("Item 0"));
+        assertThat(group.getItem(2).getIdentityKey(), is("Item 1"));
+        assertThat(group.getItem(3).getIdentityKey(), is("Item 2"));
+        assertThat(group.getItem(4).getIdentityKey(), is("Item 3"));
+        assertThat(group.getItem(5).getIdentityKey(), is("Item 4"));
+    }
 }

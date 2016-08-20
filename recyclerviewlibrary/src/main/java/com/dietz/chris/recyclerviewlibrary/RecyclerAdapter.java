@@ -21,8 +21,11 @@ import android.view.ViewGroup;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterItem;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterList;
 import com.dietz.chris.recyclerviewlibrary.core.AdapterListListener;
+import com.dietz.chris.recyclerviewlibrary.core.Filter;
 
+import java.util.ArrayList;
 import java.util.Collection;
+import java.util.List;
 
 /**
  *
@@ -95,6 +98,10 @@ public class RecyclerAdapter extends RecyclerView.Adapter<ViewHolder<? extends R
                 addItem(item);
             }
         }
+    }
+
+    public <K extends RecyclerItem> void filter(Filter<K> filter, Class<K> classFilter) {
+        mList.filter(filter, classFilter);
     }
 
     /**

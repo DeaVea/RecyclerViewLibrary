@@ -14,6 +14,7 @@
 
 package com.dietz.chris.recyclerviewlibrary.core;
 
+import android.support.annotation.CallSuper;
 import android.support.annotation.NonNull;
 import android.support.annotation.Nullable;
 
@@ -24,7 +25,7 @@ import java.util.Collection;
 /**
  *
  */
-public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterItem> {
+public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<AdapterItem> {
 
     private K mPayload;
 
@@ -34,7 +35,9 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
     private String mDefaultIdentityKey = null;
     private boolean mIsSolid;
     private boolean mIsOpen;
+    private boolean mIsHidden;
     private AdapterListener mListener;
+    private Filter<K> mMyFilter;
 
     public AdapterItem(K payload) {
         if (payload == null) {
@@ -44,6 +47,41 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
         mIsSolid = false;
         mListener = null;
         mPayload = payload;
+    }
+
+    /**
+     * Applies a filter to this item and any item that is contained in it.  If the filter filters itself,
+     * then all items in this Item will be removed.
+     *
+     * @param filter
+     *      The filter to apply or null.
+     */
+    @CallSuper
+    public <T extends RecyclerItem> void filter(@Nullable  Filter<T> filter, @NonNull Class<T> ofClass) {
+        if (ofClass.isInstance(mPayload)) {
+            //noinspection unchecked We've just verified that the filter will be of the same type.
+            applyFilter((Filter<K>) filter);
+        }
+    }
+
+    /**
+     * Internal implementation of filter.  Call this when we've proven that the class is correct.
+     */
+    /* internal */ void applyFilter(@Nullable Filter<K> filter) {
+        int count = getItemCount();
+        mMyFilter = filter;
+        boolean filteredOpen = filteredOpen();
+        if (!filteredOpen) {
+            if (count > 0) {
+                onHidden();
+                notifyVisibilityChange(count);
+            }
+        } else {
+            if (count == 0) {
+                onReveal();
+                notifyVisibilityChange(getItemCount());
+            }
+        }
     }
 
     /**
@@ -86,9 +124,52 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
         if (payload == null) {
             throw new IllegalStateException("Payload must not be null.");
         }
+        int itemCount = getItemCount();
+        boolean wasFilteredOpen = filteredOpen();
+
         mPayload = payload;
         mDefaultIdentityKey = generateDefaultKey();
-        notifyListChange();
+
+        if (mIsHidden) {
+            // Don't notify because we're hidden.
+            return;
+        }
+
+        boolean isNowFilteredOpen = filteredOpen();
+
+        if (wasFilteredOpen != isNowFilteredOpen) {
+            if (isNowFilteredOpen) {
+                itemCount = getItemCount(); // Get the real count because otherwise it's 0.
+            }
+
+            // We either went from filtered open to filtered close or vice versa
+            notifyVisibilityChange(itemCount);
+        } else if (isNowFilteredOpen) {
+            // Else the filter is the same, but no longer needing change.
+            notifyListChange();
+        }
+    }
+
+    /**
+     * Hide the item from view.
+     */
+    public void hide() {
+        if (!mIsHidden) {
+            int count = getItemCount();
+            mIsHidden = true;
+            onHidden();
+            notifyVisibilityChange(count);
+        }
+    }
+
+    public void reveal() {
+        if (mIsHidden) {
+            mIsHidden = false;
+            if (filteredOpen()) {
+                onReveal();
+                notifyVisibilityChange(getItemCount());
+            }
+        }
     }
 
     /**
@@ -133,6 +214,10 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
         return payload != null && mPayload.getIdentityKey().equals(payload.getIdentityKey());
     }
 
+    Filter<K> getFilter() {
+        return mMyFilter;
+    }
+
     /**
      * If this is a group, this will remove the item that contains the payload from the group.
      * @param payload
@@ -153,7 +238,7 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
      *
      */
     int getItemCount() {
-        return 1;
+        return isHidden() ? 0 : 1;
     }
 
     /**
@@ -254,13 +339,24 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
     }
 
     /**
+     * Returns true if the item is currently hidden from the collection.
+     * @return
+     *      True if the item is hidden;
+     */
+    public final boolean isHidden() {
+        return mIsHidden || !filteredOpen();
+    }
+
+    /**
      * Call an open to the call to the adapter item.
      */
     public final void open() {
         if (!mIsSolid && !mIsOpen) {
-            onOpen();
             mIsOpen = true;
-            notifyListChange();
+            if (!mIsHidden) {
+                onOpen();
+                notifyListChange();
+            }
         }
     }
 
@@ -268,9 +364,15 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
      * Perform a close operation on the item.
      */
     public final void close() {
+        closeInternal(false);
+    }
+
+    private void closeInternal(boolean byFilter) {
         if (!mIsSolid && mIsOpen) {
+            if (!byFilter) {
+                mIsOpen = false; // This should only change if we're being applied by external forces.  The filter means we are still open technically.
+            }
             onClose();
-            mIsOpen = false;
             notifyListChange();
         }
     }
@@ -289,9 +391,32 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
 
     }
 
+    /**
+     * A hidden call has been placed on this item.
+     */
+    public void onHidden() {
+
+    }
+
+    /**
+     * A reveal call has been placed on this item.
+     */
+    public void onReveal() {
+
+    }
+
     @Nullable
     /* internal */ AdapterListener myListener() {
         return mListener;
+    }
+
+    /**
+     * Notify that this item visibility has changed.
+     */
+    protected void notifyVisibilityChange(int itemsChanged) {
+        if (mListener != null) {
+            mListener.itemVisibilityChange(this, !isHidden(), itemsChanged);
+        }
     }
 
     /**
@@ -301,6 +426,13 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
         if (mListener != null) {
             mListener.itemChanged(this);
         }
+    }
+
+    /**
+     * Returns true if the filter says we're supposed to be open.
+     */
+    protected boolean filteredOpen() {
+        return mMyFilter == null || mMyFilter.accept(mPayload);
     }
 
     /**
@@ -320,6 +452,7 @@ public class AdapterItem<K extends RecyclerItem> implements Comparable<AdapterIt
      * @return
      *      A unique key used to identify the object.
      */
+    @Override
     @NonNull
     public String getIdentityKey() {
         if (mDefaultIdentityKey == null) {

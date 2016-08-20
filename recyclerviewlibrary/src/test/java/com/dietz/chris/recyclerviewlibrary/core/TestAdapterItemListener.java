@@ -24,6 +24,7 @@ import java.util.ArrayList;
 public class TestAdapterItemListener implements AdapterListener {
 
     final ArrayList<AdapterItem> mChangedItems = new ArrayList<>();
+    final ArrayList<VisibilityChange> mVisibilityChangeItems = new ArrayList<>();
 
     public AdapterItem lastChangedItem() {
         return (mChangedItems.isEmpty()) ? null : mChangedItems.get(mChangedItems.size() - 1);
@@ -32,6 +33,11 @@ public class TestAdapterItemListener implements AdapterListener {
     @Override
     public void itemChanged(@NonNull AdapterItem item) {
         mChangedItems.add(item);
+    }
+
+    @Override
+    public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int count) {
+        mVisibilityChangeItems.add(new VisibilityChange(isVisible, item));
     }
 
     @Override
@@ -52,5 +58,15 @@ public class TestAdapterItemListener implements AdapterListener {
     @Override
     public void itemsRemoved(@NonNull AdapterItemGroup container, int fromPosition, int size) {
 
+    }
+
+    public static class VisibilityChange {
+        public final boolean isVisible;
+        public final AdapterItem item;
+
+        public VisibilityChange(boolean visible, AdapterItem i) {
+            isVisible = visible;
+            item = i;
+        }
     }
 }

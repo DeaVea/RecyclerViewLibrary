@@ -27,11 +27,10 @@ import java.util.HashSet;
  *
  */
 class AdapterItemCollection {
-
-    private final ArrayList<AdapterItem> mList;
-    private final HashMap<String, AdapterItem> mMap;
+    private final HashArrayList<AdapterItem> mList;
     private final ListListener mListener;
     private final InternalItemListener mItemListener;
+    private final HashMap<Class<?>, Filter<?>> mFilters;
 
     /**
      * Contains the full size of the collection.  This isn't just elements in the list, but the size
@@ -40,11 +39,26 @@ class AdapterItemCollection {
     private int mFullSize;
 
     public AdapterItemCollection(ListListener listener) {
-        mList = new ArrayList<>();
-        mMap = new HashMap<>();
+        mList = new HashArrayList<>();
+        mFilters = new HashMap<>();
         mItemListener = new InternalItemListener();
         mListener = listener;
         mFullSize = 0;
+    }
+
+    /**
+     * Apply a filter to only show the items that are in this.
+     *
+     * @param filter
+     *         Filter to apply.
+     * @param classType
+     *         Type of object this is filtering out.
+     */
+    public <K extends RecyclerItem> void applyFilter(Filter<K> filter, Class<K> classType) {
+        mFilters.put(classType, filter);
+        for (AdapterItem item : mList) {
+            item.filter(filter, classType);
+        }
     }
 
     /**
@@ -61,10 +75,11 @@ class AdapterItemCollection {
 
     /**
      * Finds the first item with the given payload.
+     *
      * @param payload
-     *      Payload item to check
-     * @return
-     *      First item found that has the payload or null if it does not.
+     *         Payload item to check
+     *
+     * @return First item found that has the payload or null if it does not.
      */
     public <K extends RecyclerItem> AdapterItem findItemWithPayload(K payload) {
         AdapterItem returnItem;
@@ -78,13 +93,14 @@ class AdapterItemCollection {
 
     /**
      * Finds the first item with the given key or null if it is not found.
+     *
      * @param key
-     *      Key to search for.
-     * @return
-     *      AdapterItem found with the given key or null if it is not in the list.
+     *         Key to search for.
+     *
+     * @return AdapterItem found with the given key or null if it is not in the list.
      */
     public AdapterItem findItemWithKey(String key) {
-        AdapterItem returnItem = mMap.get(key);
+        AdapterItem returnItem = mList.get(key);
         if (returnItem == null) {
             for (AdapterItem item : mList) {
                 if ((returnItem = item.getItemWithIdentityKey(key)) != null) {
@@ -97,10 +113,11 @@ class AdapterItemCollection {
 
     /**
      * Finds all the items that are in this list that contains the payload and removes it.
+     *
      * @param payload
-     *      payload item to look for.
-     * @return
-     *      Number of items that were removed.
+     *         payload item to look for.
+     *
+     * @return Number of items that were removed.
      */
     public <K extends RecyclerItem> int removeItemWithPayload(K payload) {
         int removedItems = 0;
@@ -122,16 +139,14 @@ class AdapterItemCollection {
 
     /**
      * Returns true if the collection contains the given item.
+     *
      * @param item
-     *      Item to check.
-     * @return
-     *      True if the item is in the collection or false otherwise.
+     *         Item to check.
+     *
+     * @return True if the item is in the collection or false otherwise.
      */
     public boolean contains(AdapterItem item) {
-        if (item == null) {
-            return false;
-        }
-        if (mMap.containsKey(item.getIdentityKey())) {
+        if (mList.contains(item)) {
             return true;
         }
         for (AdapterItem internalItem : mList) {
@@ -144,8 +159,8 @@ class AdapterItemCollection {
 
     /**
      * Current size of the collection.
-     * @return
-     *      Current size of the entire collection.
+     *
+     * @return Current size of the entire collection.
      */
     public int size() {
         return mFullSize;
@@ -158,17 +173,17 @@ class AdapterItemCollection {
         int size = mFullSize;
         unregisterAllListener(mList);
         mList.clear();
-        mMap.clear();
         mFullSize = 0;
         onItemRangeRemoved(0, size);
     }
 
     /**
      * Gets the item at the given position.
+     *
      * @param position
-     *      Position to retrieve the item.
-     * @return
-     *      Item contained at the given position.
+     *         Position to retrieve the item.
+     *
+     * @return Item contained at the given position.
      */
     // If the returning call is not the right type, then something went wrong anyway so it should throw an exception.
     @SuppressWarnings("unchecked")
@@ -177,9 +192,7 @@ class AdapterItemCollection {
         int max = mList.size();
         for (int i = 0; i < max; i++) {
             AdapterItem item = mList.get(i);
-            if (remaining == 0) {
-                return (K) item;
-            } else if (remaining < item.getItemCount()){
+            if (remaining < item.getItemCount()) {
                 return (K) item.getItem(remaining);
             }
             remaining -= item.getItemCount();
@@ -190,10 +203,11 @@ class AdapterItemCollection {
     /**
      * Removes the item passed in.  This will remove the item that has the underlying identifying AdapterItem key,
      * so if the data structure is different then it will still be removed.
+     *
      * @param item
-     *      Item to remove
-     * @return
-     *      True if the item was removed or false otherwise.
+     *         Item to remove
+     *
+     * @return True if the item was removed or false otherwise.
      */
     public boolean remove(@NonNull AdapterItem item) {
         return removeItemFromHere(item) | removeItemFromCollection(item);
@@ -201,14 +215,15 @@ class AdapterItemCollection {
 
     /**
      * Add an item or update it if it is already in the collection.
+     *
      * @param item
-     *      Item to update.
-     * @return
-     *      New position of the item.
+     *         Item to update.
+     *
+     * @return New position of the item.
      */
     public int addOrUpdate(@NonNull AdapterItem item) {
         int position;
-        if (mMap.containsKey(item.getIdentityKey())) {
+        if (mList.contains(item)) {
             position = updateInternal(item);
         } else {
             position = addInternal(item);
@@ -219,20 +234,20 @@ class AdapterItemCollection {
     /**
      * Retrieves all the adapter items in this collection that are contained within this collection.
      * This will be determined based off their identity key.
-     *
+     * <p/>
      * This will only return the items that are contained in this collection.  If the items are not
      * in this collection then they will be left out, so it's possible the returned collection will
      * be less than the size of the items given.
      *
      * @param items
-     *      Payloads to retrieve in this collection.
-     * @return
-     *      All the items that are in this collection that
+     *         Payloads to retrieve in this collection.
+     *
+     * @return All the items that are in this collection that
      */
     /* internal */ Collection<AdapterItem> getItemsWithPayloads(Collection<? extends RecyclerItem> items) {
         HashSet<AdapterItem> returnItems = new HashSet<>(items.size());
         for (RecyclerItem item : items) {
-            AdapterItem containedItem = mMap.get(item.getIdentityKey());
+            AdapterItem containedItem = mList.get(item.getIdentityKey());
             if (containedItem != null) {
                 returnItems.add(containedItem);
             }
@@ -243,14 +258,14 @@ class AdapterItemCollection {
     /**
      * Retrieve all the adapter items in this collection that are not contained within this collection.
      * This will be determined based off their identity key.
-     *
+     * <p/>
      * This will only return the items that are contained in this collection which do not have the payloads
      * provided.
      *
      * @param items
-     *      Payloads to exclude from the collection.
-     * @return
-     *      All the items that don't have this provided payloads.
+     *         Payloads to exclude from the collection.
+     *
+     * @return All the items that don't have this provided payloads.
      */
     /* internal */ Collection<AdapterItem> getItemsExcludingPayloads(Collection<? extends RecyclerItem> items) {
         HashSet<String> keys = new HashSet<>(items.size());
@@ -258,8 +273,8 @@ class AdapterItemCollection {
             keys.add(item.getIdentityKey());
         }
 
-        HashSet<AdapterItem> returnItems = new HashSet<>(mMap.size() - items.size());
-        for (AdapterItem item : mMap.values()) {
+        HashSet<AdapterItem> returnItems = new HashSet<>(mList.size() - items.size());
+        for (AdapterItem item : mList) {
             if (!keys.contains(item.getIdentityKey())) {
                 returnItems.add(item);
             }
@@ -269,10 +284,11 @@ class AdapterItemCollection {
 
     /**
      * Removes a collection of items from the internal list.
+     *
      * @param items
-     *      Items to remove.
-     * @return
-     *      Number of items that were actaully removed.
+     *         Items to remove.
+     *
+     * @return Number of items that were actaully removed.
      */
     private int removeItemsFromHere(Collection<AdapterItem> items) {
         int itemsRemoved = 0;
@@ -285,18 +301,18 @@ class AdapterItemCollection {
 
     /**
      * Remove an item that's contained in this collection.
+     *
      * @param item
-     *      Item to remove.  It must be in this collection.
+     *         Item to remove.  It must be in this collection.
      */
     private boolean removeItemFromHere(AdapterItem item) {
-        final AdapterItem oldItem = mMap.remove(item.getIdentityKey());
+        final int index = mList.indexOf(item);
+        final AdapterItem oldItem = mList.remove(item.getIdentityKey());
         if (oldItem != null) {
             int numberOfItems = oldItem.getItemCount();
             mFullSize -= numberOfItems;
-            int index = mList.indexOf(oldItem);
+
             final int indexInFull = Utils.adjustPositionForItems(index, mList);
-            mList.remove(oldItem);
-            mMap.remove(oldItem.getIdentityKey());
             oldItem.unbindListener();
 
             if (numberOfItems == 1) {
@@ -311,8 +327,9 @@ class AdapterItemCollection {
 
     /**
      * Remove an item that's contained in other items.
+     *
      * @param item
-     *      Item to remove.  Does not have to be in this collection itself.
+     *         Item to remove.  Does not have to be in this collection itself.
      */
     private boolean removeItemFromCollection(AdapterItem item) {
         boolean removed = false;
@@ -324,34 +341,41 @@ class AdapterItemCollection {
 
     /**
      * Updates an item that is in the collection that contains the same identity key as the one provided.
+     *
      * @param item
-     *      Item to update.
-     * @return
-     *      New position of the item in the entire list.
+     *         Item to update.
+     *
+     * @return New position of the item in the entire list.
      */
     private int updateInternal(AdapterItem item) {
-        AdapterItem oldItem = mMap.get(item.getIdentityKey());
+        AdapterItem oldItem = mList.getReal(item);
         oldItem.unbindListener();
-        item.bindList(mItemListener);
 
-        mMap.put(item.getIdentityKey(), item);
+        item.applyFilter(oldItem.getFilter());
+
+        item.bindList(mItemListener);
 
         int oldPositionInMyList = mList.indexOf(oldItem);
         int oldPositionInOverallList = Utils.adjustPositionForItems(oldPositionInMyList, mList);
+
         mList.remove(oldPositionInMyList);
 
         int newPositionInMyList = Utils.getPositionInList(item, mList);
         int newPositionInOverallList = Utils.adjustPositionForItems(newPositionInMyList, mList);
-        if (newPositionInMyList >= mList.size()) {
-            mList.add(item);
-        } else {
-            mList.add(newPositionInMyList, item);
+
+        mList.safeAdd(newPositionInMyList, item);
+
+        if (item.isHidden()) {
+            return newPositionInMyList;
         }
 
         mFullSize += item.getItemCount() - oldItem.getItemCount();
 
         if (newPositionInOverallList == oldPositionInOverallList) {
-            onItemChanged(newPositionInMyList, item);
+            // The item's only changed if the payloads changed.
+            if (!Utils.itemsEqual(item.getPayload(), oldItem.getPayload())) {
+                onItemChanged(newPositionInMyList, item);
+            }
         } else {
             onItemMoved(oldPositionInOverallList, newPositionInOverallList, item);
         }
@@ -360,21 +384,25 @@ class AdapterItemCollection {
 
     /**
      * Adds an item in the current list.  This does not check if the key already exists.  It just assumes it does not.
+     *
      * @param item
-     *      Item to add
-     * @return
-     *      New position in the overall list that contains the item.
+     *         Item to add
+     *
+     * @return New position in the overall list that contains the item.
      */
     private int addInternal(AdapterItem item) {
+        final Filter filter = getFilterFor(item.getPayload().getClass(), mFilters);
+        item.applyFilter(filter);
+
         item.bindList(mItemListener);
-        mMap.put(item.getIdentityKey(), item);
+
         int positionInMyList = Utils.getPositionInList(item, mList);
         int positionInOverallList = Utils.adjustPositionForItems(positionInMyList, mList);
 
-        if (positionInMyList >= mList.size()) {
-            mList.add(item);
-        } else {
-            mList.add(positionInMyList, item);
+        mList.safeAdd(positionInMyList, item);
+
+        if (item.isHidden()) {
+            return positionInOverallList;
         }
 
         mFullSize += item.getItemCount();
@@ -419,14 +447,34 @@ class AdapterItemCollection {
         }
     }
 
-    // All items in this list will be of type "K".  No need to validate it.
-    @SuppressWarnings({"unchecked", "SuspiciousMethodCalls"})
     private class InternalItemListener implements AdapterListener {
 
         @Override
         public void itemChanged(@NonNull AdapterItem item) {
+            if (!item.isHidden()) {
+                int realIndex = Utils.getPosition(item, mList);
+                onItemChanged(realIndex, item);
+            }
+        }
+
+        @Override
+        public void itemVisibilityChange(@NonNull AdapterItem item, boolean isVisible, int itemsCount) {
             int realIndex = Utils.getPosition(item, mList);
-            mListener.onItemChanged(realIndex, item);
+            if (isVisible) {
+                mFullSize += itemsCount;
+                if (itemsCount > 1) {
+                    onItemRangeInserted(realIndex, itemsCount);
+                } else {
+                    onItemInserted(realIndex, item);
+                }
+            } else {
+                mFullSize -= itemsCount;
+                if (itemsCount > 1) {
+                    onItemRangeRemoved(realIndex, itemsCount);
+                } else {
+                    onItemRemoved(realIndex, item);
+                }
+            }
         }
 
         @Override
@@ -458,13 +506,32 @@ class AdapterItemCollection {
         }
     }
 
-    private static boolean equals(AdapterItem item, AdapterItem item2) {
-        return item.getIdentityKey().equals(item2.getIdentityKey()) && item.hashCode() == item2.hashCode() && item.equals(item2);
-    }
-
     private static void unregisterAllListener(Collection<? extends AdapterItem> items) {
         for (AdapterItem item : items) {
             item.unbindListener();
         }
+    }
+
+    protected static Filter getFilterFor(Class<?> cls, HashMap<Class<?>, Filter<?>> map) {
+        if (cls == null) {
+            return null;
+        }
+
+        Filter filter = map.get(cls);
+        if (filter != null) {
+            return filter;
+        }
+
+        // Now check the interfaces
+        Class[] interfaces = cls.getInterfaces();
+        //noinspection ForLoopReplaceableByForEach Array traversal is faster on Android with integers.
+        for (int i = 0; i < interfaces.length; ++i) {
+            filter = map.get(interfaces[0]);
+            if (filter != null) {
+                return filter;
+            }
+        }
+
+        return getFilterFor(cls.getSuperclass(), map);
     }
 }
