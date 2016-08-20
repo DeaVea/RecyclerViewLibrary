@@ -20,6 +20,7 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.HashSet;
 
 /**
@@ -29,6 +30,7 @@ class AdapterItemCollection {
     private final HashArrayList<AdapterItem> mList;
     private final ListListener mListener;
     private final InternalItemListener mItemListener;
+    private final HashMap<Class<?>, Filter<?>> mFilters;
 
     /**
      * Contains the full size of the collection.  This isn't just elements in the list, but the size
@@ -38,6 +40,7 @@ class AdapterItemCollection {
 
     public AdapterItemCollection(ListListener listener) {
         mList = new HashArrayList<>();
+        mFilters = new HashMap<>();
         mItemListener = new InternalItemListener();
         mListener = listener;
         mFullSize = 0;
@@ -52,6 +55,7 @@ class AdapterItemCollection {
      *         Type of object this is filtering out.
      */
     public <K extends RecyclerItem> void applyFilter(Filter<K> filter, Class<K> classType) {
+        mFilters.put(classType, filter);
         for (AdapterItem item : mList) {
             item.filter(filter, classType);
         }
@@ -387,12 +391,19 @@ class AdapterItemCollection {
      * @return New position in the overall list that contains the item.
      */
     private int addInternal(AdapterItem item) {
+        final Filter filter = getFilterFor(item.getPayload().getClass(), mFilters);
+        item.applyFilter(filter);
+
         item.bindList(mItemListener);
 
         int positionInMyList = Utils.getPositionInList(item, mList);
         int positionInOverallList = Utils.adjustPositionForItems(positionInMyList, mList);
 
         mList.safeAdd(positionInMyList, item);
+
+        if (item.isHidden()) {
+            return positionInOverallList;
+        }
 
         mFullSize += item.getItemCount();
 
@@ -499,5 +510,28 @@ class AdapterItemCollection {
         for (AdapterItem item : items) {
             item.unbindListener();
         }
+    }
+
+    protected static Filter getFilterFor(Class<?> cls, HashMap<Class<?>, Filter<?>> map) {
+        if (cls == null) {
+            return null;
+        }
+
+        Filter filter = map.get(cls);
+        if (filter != null) {
+            return filter;
+        }
+
+        // Now check the interfaces
+        Class[] interfaces = cls.getInterfaces();
+        //noinspection ForLoopReplaceableByForEach Array traversal is faster on Android with integers.
+        for (int i = 0; i < interfaces.length; ++i) {
+            filter = map.get(interfaces[0]);
+            if (filter != null) {
+                return filter;
+            }
+        }
+
+        return getFilterFor(cls.getSuperclass(), map);
     }
 }

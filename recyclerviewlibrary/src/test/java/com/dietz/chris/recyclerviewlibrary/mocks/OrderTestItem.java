@@ -21,13 +21,43 @@ import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 /**
  *
  */
-public class OrderTestItem extends TestItem {
-
-    private int order = 0;
+public class OrderTestItem implements RecyclerItem {
+    private final String key;
+    private int value;
+    private int type;
+    private int order;
 
     public OrderTestItem(String key, int order) {
-        super(key);
+        this.key = key;
+        this.type = 0;
+        this.value = 0;
         this.order = order;
+    }
+
+    @NonNull
+    @Override
+    public String getIdentityKey() {
+        return key;
+    }
+
+    @Override
+    public int getType() {
+        return type;
+    }
+
+
+    public OrderTestItem setValue(int value) {
+        this.value = value;
+        return this;
+    }
+
+    public int getValue() {
+        return value;
+    }
+
+    public OrderTestItem setType(int type) {
+        this.type = type;
+        return this;
     }
 
     public void setOrder(int order) {
@@ -43,7 +73,7 @@ public class OrderTestItem extends TestItem {
         if (item instanceof OrderTestItem) {
             return order - ((OrderTestItem) item).order;
         } else {
-            return 0;
+            return key.compareTo(item.getIdentityKey());
         }
     }
 }
