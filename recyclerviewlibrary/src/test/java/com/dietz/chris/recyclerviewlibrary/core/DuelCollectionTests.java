@@ -518,5 +518,10 @@ public class DuelCollectionTests {
 
         assertThat(item.filteredOpen(), is(false));
         assertThat(items.size(), is(0));
+
+        item.setPayload(new OrderTestItem("A", 2));
+
+        assertThat(item.filteredOpen(), is(true));
+        assertThat(items.size(), is(1));
     }
 }

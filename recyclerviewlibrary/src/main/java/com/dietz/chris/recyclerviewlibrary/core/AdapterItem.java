@@ -20,10 +20,7 @@ import android.support.annotation.Nullable;
 
 import com.dietz.chris.recyclerviewlibrary.RecyclerItem;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.Collections;
-import java.util.List;
 
 /**
  *
@@ -127,9 +124,30 @@ public class AdapterItem<K extends RecyclerItem> implements Keyed, Comparable<Ad
         if (payload == null) {
             throw new IllegalStateException("Payload must not be null.");
         }
+        int itemCount = getItemCount();
+        boolean wasFilteredOpen = filteredOpen();
+
         mPayload = payload;
         mDefaultIdentityKey = generateDefaultKey();
-        notifyListChange();
+
+        if (mIsHidden) {
+            // Don't notify because we're hidden.
+            return;
+        }
+
+        boolean isNowFilteredOpen = filteredOpen();
+
+        if (wasFilteredOpen != isNowFilteredOpen) {
+            if (isNowFilteredOpen) {
+                itemCount = getItemCount(); // Get the real count because otherwise it's 0.
+            }
+
+            // We either went from filtered open to filtered close or vice versa
+            notifyVisibilityChange(itemCount);
+        } else if (isNowFilteredOpen) {
+            // Else the filter is the same, but no longer needing change.
+            notifyListChange();
+        }
     }
 
     /**
