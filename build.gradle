@@ -6,9 +6,8 @@ buildscript {
     }
     dependencies {
         classpath 'com.android.tools.build:gradle:2.2.2'
-
-        // NOTE: Do not place your application dependencies here; they belong
-        // in the individual module build.gradle files
+        // Used in Contacts app, but not necessary for the library.
+        classpath 'me.tatarka:gradle-retrolambda:3.3.1'
     }
 }
 
@@ -21,11 +20,12 @@ allprojects {
 ext {
     appVersion = "0.0.1"
     versionCode = 1
-    androidSupportVersion = "24.1.1"
+
+    androidSupportVersion = "25.0.0"
     buildTools = "23.0.2"
 
     minSdk = 15
-    targetSdk = 24
+    targetSdk = 25
 }
 
 task clean(type: Delete) {
